@@ -27,9 +27,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -48,20 +47,20 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-@TeleOp(name = "Concept: Scan Servo 2", group = "Concept")
-@Disabled
-public class ConceptScanServo extends LinearOpMode {
+@TeleOp(name = "Scan Servo 2", group = "Test")
+//@Disabled
+public class ConceptScanServo2 extends LinearOpMode {
 
-    static final double INCREMENT   = 5;        //0.01;     // amount to slew servo each CYCLE_MS cycle
-    static final int    CYCLE_MS    =  1000;   // period of each cycle
+    //static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
+    static final int    CYCLE_MS    =   5000;     // period of each cycle
+    static final double MIN_POS     =  0.1;     // Minimum rotational position
+    static final double MAX_POS     =  0.5;     // Maximum rotational position
 
-    static final double MIN_POS     =  0.0;     // Minimum rotational position
-    static final double MAX_POS     =  0.5;     // 1.0;     // Maximum rotational position
 
     // Define class members
-    Servo   servo;
-    double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
-    boolean rampUp = true;
+    Servo _servo;
+    //double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
+    //boolean rampUp = true;
 
 
     @Override
@@ -69,7 +68,7 @@ public class ConceptScanServo extends LinearOpMode {
 
         // Connect to servo (Assume Robot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        servo = hardwareMap.get(Servo.class, "left_hand");
+        _servo = hardwareMap.get(Servo.class, "IN-ARM");
 
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
@@ -80,33 +79,44 @@ public class ConceptScanServo extends LinearOpMode {
         // Scan servo till stop pressed.
         while(opModeIsActive()){
 
-            // slew the servo, according to the rampUp (direction) variable.
-            if (rampUp) {
-                // Keep stepping up until we hit the max value.
-                position += INCREMENT ;
-                if (position >= MAX_POS ) {
-                    position = MAX_POS;
-                    rampUp = !rampUp;   // Switch ramp direction
-                }
-            }
-            else {
-                // Keep stepping down until we hit the min value.
-                position -= INCREMENT ;
-                if (position <= MIN_POS ) {
-                    position = MIN_POS;
-                    rampUp = !rampUp;  // Switch ramp direction
-                }
-            }
+            _servo.setPosition(MIN_POS);
+            telemetry.addData("Servo Position", "%5.2f", MIN_POS);
+            sleep(CYCLE_MS);
 
-            // Display the current value
-            telemetry.addData("Servo Position", "%5.2f", position);
-            telemetry.addData(">", "Press Stop to end test." );
-            telemetry.update();
-
-            // Set the servo to the new position and pause;
-            servo.setPosition(position);
+            _servo.setPosition(MAX_POS);
+            telemetry.addData("Servo Position", "%5.2f", MAX_POS);
             sleep(CYCLE_MS);
             idle();
+
+
+
+//            // slew the servo, according to the rampUp (direction) variable.
+//            if (rampUp) {
+//                // Keep stepping up until we hit the max value.
+//                position += INCREMENT ;
+//                if (position >= MAX_POS ) {
+//                    position = MAX_POS;
+//                    rampUp = !rampUp;   // Switch ramp direction
+//                }
+//            }
+//            else {
+//                // Keep stepping down until we hit the min value.
+//                position -= INCREMENT ;
+//                if (position <= MIN_POS ) {
+//                    position = MIN_POS;
+//                    rampUp = !rampUp;  // Switch ramp direction
+//                }
+//            }
+//
+            // Display the current value
+//            telemetry.addData("Servo Position", "%5.2f", position);
+            telemetry.addData(">", "Press Stop to end test." );
+            telemetry.update();
+//
+//            // Set the servo to the new position and pause;
+//            servo.setPosition(position);
+//            sleep(CYCLE_MS);
+//            idle();
         }
 
         // Signal done;
