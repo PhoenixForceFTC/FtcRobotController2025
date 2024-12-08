@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.utils.DriveUtils;
+import org.firstinspires.ftc.teamcode.utils.ServoUtils;
+
 @TeleOp(name="Mecanum Drive", group="TeleOp")
 public class TeleOp_Mecanum extends LinearOpMode
 {
@@ -12,6 +15,8 @@ public class TeleOp_Mecanum extends LinearOpMode
     //------------------------------------------------------------------------------------------
     RobotHardware _robot = new RobotHardware(this);
     public ElapsedTime _runtime = new ElapsedTime();
+
+    double _servoPos = 0.3;    // Initial servo position
 
     //------------------------------------------------------------------------------------------
     //--- OpMode
@@ -38,136 +43,191 @@ public class TeleOp_Mecanum extends LinearOpMode
         while (opModeIsActive()) {
 
             //------------------------------------------------------------------------------------------
-            //--- Display Info
+            //--- Start Telemetry Display
             //------------------------------------------------------------------------------------------
             telemetry.addData("Status", "Run Time: " + _runtime.toString());
 
             //------------------------------------------------------------------------------------------
             //--- Control Methods
             //------------------------------------------------------------------------------------------
-            MecanumDrive(true); //--- gamepad1.left_stick_y, gamepad1.left_stick_x
-            ArmControl(true);
-            IntakeControl(true);
+            DriveUtils.mecanumDrive(
+                    _robot.motorDriveFrontLeft, _robot.motorDriveFrontRight, _robot.motorDriveRearLeft, _robot.motorDriveRearRight,
+                    gamepad1, telemetry);
+
+            //ArmClawControl(true);
+            //ArmWristFineTune(true);
+            //ArmElbowFineTune(true);
+            ArmShoulderFineTune(true);
+
+            //IntakeLiftControl(true);
+            //IntakeControl(true);
 
             //------------------------------------------------------------------------------------------
-            //--- Display Info
+            //--- Update Telemetry Display
             //------------------------------------------------------------------------------------------
-            telemetry.addData("Intake Left Up/Down", "%4.2f", _robot.servoIntakeUpDownLeftPos);
-            telemetry.addData("Intake Right Up/Down", "%4.2f", _robot.servoIntakeUpDownRightPos);
-
-
-
             telemetry.update();
+        }
+    }
+
+    private void ArmClawFineTune(boolean showInfo)
+    {
+        //--- wide open = 0.61
+        //--- closed = 0.76
+
+        double incrementPos = 0.01; // Amount to increment/decrement
+        double minPos = 0.0;       // Minimum servo position
+        double maxPos = 1.0;       // Maximum servo position
+
+        //--- Adjust servo position based on button presses
+        if (gamepad1.y) {
+            _servoPos = Math.min(_servoPos + incrementPos, maxPos);
+            _robot.servoArmClawPos = ServoUtils.moveToPosition(_robot.servoArmClaw, _servoPos);
+        }
+        if (gamepad1.a) {
+            _servoPos = Math.max(_servoPos - incrementPos, minPos);
+            _robot.servoArmClawPos = ServoUtils.moveToPosition(_robot.servoArmClaw, _servoPos);
+        }
+        sleep(100);
+
+        //--- Show messages
+        if (showInfo)
+        {
+            telemetry.addData("Arm Claw", "%4.2f", _robot.servoArmClawPos);
+        }
+    }
+
+    private void ArmWristFineTune(boolean showInfo)
+    {
+        //--- pronated = 0.03
+        //--- supinated = 0.69
+
+        double incrementPos = 0.01; // Amount to increment/decrement
+        double minPos = 0.0;       // Minimum servo position
+        double maxPos = 1.0;       // Maximum servo position
+
+        //--- Adjust servo position based on button presses
+        if (gamepad1.y) {
+            _servoPos = Math.min(_servoPos + incrementPos, maxPos);
+            _robot.servoArmWristPos = ServoUtils.moveToPosition(_robot.servoArmWrist, _servoPos);
+        }
+        if (gamepad1.a) {
+            _servoPos = Math.max(_servoPos - incrementPos, minPos);
+            _robot.servoArmWristPos = ServoUtils.moveToPosition(_robot.servoArmWrist, _servoPos);
+        }
+        sleep(100);
+
+        //--- Show messages
+        if (showInfo)
+        {
+            telemetry.addData("Arm Wrist", "%4.2f", _robot.servoArmWristPos);
+        }
+    }
+
+    private void ArmElbowFineTune(boolean showInfo)
+    {
+        //--- intake = 0.31
+        //---
+
+        double incrementPos = 0.01; // Amount to increment/decrement
+        double minPos = 0.0;       // Minimum servo position
+        double maxPos = 1.0;       // Maximum servo position
+
+        //--- Adjust servo position based on button presses
+        if (gamepad1.y) {
+            _servoPos = Math.min(_servoPos + incrementPos, maxPos);
+            _robot.servoArmElbowPos = ServoUtils.moveToPosition(_robot.servoArmElbow, _servoPos);
+        }
+        if (gamepad1.a) {
+            _servoPos = Math.max(_servoPos - incrementPos, minPos);
+            _robot.servoArmElbowPos = ServoUtils.moveToPosition(_robot.servoArmElbow, _servoPos);
+        }
+        sleep(100);
+
+        //--- Show messages
+        if (showInfo)
+        {
+            telemetry.addData("Arm Elbow", "%4.2f", _robot.servoArmElbowPos);
+        }
+    }
+
+    private void ArmShoulderFineTune(boolean showInfo)
+    {
+        //--- intake = 0.75
+        //--- full back = 0.14
+
+        double incrementPos = 0.01; // Amount to increment/decrement
+        double minPos = 0.0;       // Minimum servo position
+        double maxPos = 1.0;       // Maximum servo position
+
+        //--- Adjust servo position based on button presses
+        if (gamepad1.y) {
+            _servoPos = Math.min(_servoPos + incrementPos, maxPos);
+            _robot.servoArmShoulderPos = ServoUtils.moveToPosition(_robot.servoArmShoulder, _servoPos);
+        }
+        if (gamepad1.a) {
+            _servoPos = Math.max(_servoPos - incrementPos, minPos);
+            _robot.servoArmShoulderPos = ServoUtils.moveToPosition(_robot.servoArmShoulder, _servoPos);
+        }
+        sleep(100);
+
+        //--- Show messages
+        if (showInfo)
+        {
+            telemetry.addData("Arm Elbow", "%4.2f", _robot.servoArmShoulderPos);
+        }
+    }
+
+
+
+
+    private void IntakeLiftControl(boolean showInfo)
+    {
+        if (gamepad1.y) {
+            _robot.servoIntakeLiftLeftPos = ServoUtils.moveToPosition(_robot.servoIntakeLiftLeft, _robot.SERVO_INTAKE_LIFT_IN);
+            _robot.servoIntakeLiftRightPos = ServoUtils.moveToPosition(_robot.servoIntakeLiftRight, _robot.SERVO_INTAKE_LIFT_IN);
+        }
+        if (gamepad1.b) {
+            _robot.servoIntakeLiftLeftPos = ServoUtils.moveToPosition(_robot.servoIntakeLiftLeft, _robot.SERVO_INTAKE_LIFT_OUT);
+            _robot.servoIntakeLiftRightPos = ServoUtils.moveToPosition(_robot.servoIntakeLiftRight, _robot.SERVO_INTAKE_LIFT_OUT);
+        }
+        if (gamepad1.x) {
+            _robot.servoIntakeLiftLeftPos = ServoUtils.moveToPositionAndDisable(_robot.servoIntakeLiftLeft, _robot.SERVO_INTAKE_LIFT_OUT, 750);
+            _robot.servoIntakeLiftRightPos = ServoUtils.moveToPositionAndDisable(_robot.servoIntakeLiftRight, _robot.SERVO_INTAKE_LIFT_OUT, 750);
+        }
+
+        //--- Show messages
+        if (showInfo)
+        {
+            telemetry.addData("Intake Lift Left", "%4.2f", _robot.servoIntakeLiftLeftPos);
+            telemetry.addData("Intake Lift Right", "%4.2f", _robot.servoIntakeLiftRightPos);
         }
     }
 
     private void IntakeControl(boolean showInfo)
     {
-//        if (gamepad1.y)
-//        {
-//            _robot.servoIntakeSpinLeft.setPower(-1);
-//            _robot.servoIntakeSpinRight.setPower(1);
-//        }
-//        if (gamepad1.a)
-//        {
-//            _robot.servoIntakeSpinLeft.setPower(1);
-//            _robot.servoIntakeSpinRight.setPower(-1);
-//        }
-//        if (gamepad1.b)
-//        {
-//            _robot.servoIntakeSpinLeft.setPower(0);
-//            _robot.servoIntakeSpinRight.setPower(0);
-//        }
-
         if (gamepad1.y)
         {
-            _robot.servoIntakeUpDownLeft.setPosition(0.6);
-            _robot.servoIntakeUpDownRight.setPosition(0.6);
+            _robot.servoIntakeSpinLeft.setPower(-1);
+            _robot.servoIntakeSpinRight.setPower(1);
         }
         if (gamepad1.a)
         {
-            _robot.servoIntakeUpDownLeft.setPosition(0.5);
-            _robot.servoIntakeUpDownRight.setPosition(0.5);
+            _robot.servoIntakeSpinLeft.setPower(1);
+            _robot.servoIntakeSpinRight.setPower(-1);
         }
         if (gamepad1.b)
         {
-            _robot.servoIntakeUpDownLeft.setPosition(0.4);
-            _robot.servoIntakeUpDownRight.setPosition(0.4);
-        }
-        if (gamepad1.x)
-        {
-            //--- Turn off?
-            _robot.servoIntakeUpDownLeft.getController().pwmDisable();
-            _robot.servoIntakeUpDownRight.getController().pwmDisable();
+            _robot.servoIntakeSpinLeft.setPower(0);
+            _robot.servoIntakeSpinRight.setPower(0);
         }
 
         //--- Show messages
         if (showInfo)
         {
-            telemetry.addData("Arm Wrist", "%4.2f", _robot.servoArmWristPos);
-            telemetry.addData("Arm Elbow", "%4.2f", _robot.servoArmElbowPos);
-            telemetry.addData("Arm Shoulder", "%4.2f", _robot.servoArmShoulderPos);
-            telemetry.addData("Arm Claw", "%4.2f", _robot.servoArmGrabPos);
+            telemetry.addData("Intake Lift Left", "%4.2f", _robot.servoIntakeLiftLeftPos);
+            telemetry.addData("Intake Lift Right", "%4.2f", _robot.servoIntakeLiftRightPos);
         }
     }
 
-    private void ArmControl(boolean showInfo)
-    {
-//        if (gamepad1.a)
-//        {
-//
-//        }
 
-        //--- Show messages
-        if (showInfo)
-        {
-            telemetry.addData("Arm Wrist", "%4.2f", _robot.servoArmWristPos);
-            telemetry.addData("Arm Elbow", "%4.2f", _robot.servoArmElbowPos);
-            telemetry.addData("Arm Shoulder", "%4.2f", _robot.servoArmShoulderPos);
-            telemetry.addData("Arm Claw", "%4.2f", _robot.servoArmGrabPos);
-        }
-    }
-
-    private void MecanumDrive(boolean showInfo)
-    {
-        double max;
-
-        //--- POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-        double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-        double lateral =  gamepad1.left_stick_x;
-        double yaw     =  gamepad1.right_stick_x;
-
-        //--- Combine the joystick requests for each axis-motion to determine each wheel's power.
-        //--- Set up a variable for each drive wheel to save the power level for telemetry.
-        double leftFrontPower  = axial + lateral + yaw;
-        double rightFrontPower = axial - lateral - yaw;
-        double leftBackPower   = axial - lateral + yaw;
-        double rightBackPower  = axial + lateral - yaw;
-
-        //--- Normalize the values so no wheel power exceeds 100%
-        //--- This ensures that the robot maintains the desired motion.
-        max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftBackPower));
-        max = Math.max(max, Math.abs(rightBackPower));
-
-        if (max > 1.0) {
-            leftFrontPower  /= max;
-            rightFrontPower /= max;
-            leftBackPower   /= max;
-            rightBackPower  /= max;
-        }
-
-        //--- Send calculated power to wheels
-        _robot.motorDriveFrontLeft.setPower(leftFrontPower);
-        _robot.motorDriveFrontRight.setPower(rightFrontPower);
-        _robot.motorDriveRearLeft.setPower(leftBackPower);
-        _robot.motorDriveRearRight.setPower(rightBackPower);
-
-        //--- Show messages
-        if (showInfo)
-        {
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-        }
-    }
 }

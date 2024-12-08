@@ -78,8 +78,8 @@ public class RobotHardware {
     //--- Servos
     //------------------------------------------------------------------------------------------
     //--- Intake Servo
-    public Servo servoIntakeUpDownLeft = null;
-    public Servo servoIntakeUpDownRight = null;
+    public Servo servoIntakeLiftLeft = null;
+    public Servo servoIntakeLiftRight = null;
 
     public CRServo servoIntakeSpinLeft = null;
     public CRServo servoIntakeSpinRight = null;
@@ -95,14 +95,20 @@ public class RobotHardware {
     public double servoIntakeSpinLeftPower = 0.0;
 
     //--- Servo Position
-    public double servoIntakeUpDownLeftPos = 0.0;
-    public double servoIntakeUpDownRightPos = 0.0;
+    public double servoIntakeLiftLeftPos = 0.0;
+    public double servoIntakeLiftRightPos = 0.0;
 
     public double servoArmWristPos = 0.0;
     public double servoArmElbowPos = 0.0;
     public double servoArmShoulderPos = 0.0;
-    public double servoArmGrabPos = 0.0;
+    public double servoArmClawPos = 0.0;
 
+    //------------------------------------------------------------------------------------------
+    //--- Constants
+    //------------------------------------------------------------------------------------------
+
+    public double SERVO_INTAKE_LIFT_IN = 0.85;
+    public double SERVO_INTAKE_LIFT_OUT = 0.43;    //--- Out straight in front of robot
 
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
@@ -144,13 +150,14 @@ public class RobotHardware {
         servoIntakeSpinLeft = myOpMode.hardwareMap.get(CRServo.class, "in-lspin"); //--- Intake Left Spinner (Continuous)
 
         //--- Servos (Positional)
-        servoIntakeUpDownLeft = myOpMode.hardwareMap.get(Servo.class, "in-lup"); //--- Intake Left Up/Down
-        servoIntakeUpDownRight = myOpMode.hardwareMap.get(Servo.class, "in-rup"); //--- Intake Right Up/Down
+        servoIntakeLiftLeft = myOpMode.hardwareMap.get(Servo.class, "in-lup"); //--- Intake Left Up/Down
+        servoIntakeLiftRight = myOpMode.hardwareMap.get(Servo.class, "in-rup"); //--- Intake Right Up/Down
 
-        servoArmWrist = myOpMode.hardwareMap.get(Servo.class, "arm1"); //--- Arm Wrist
-        servoArmElbow = myOpMode.hardwareMap.get(Servo.class, "arm2"); //--- Arm Elbow
-        servoArmShoulder = myOpMode.hardwareMap.get(Servo.class, "arm3"); //--- Arm Shoulder
-        servoArmClaw = myOpMode.hardwareMap.get(Servo.class, "arm4"); //--- Arm Grabber / Claw
+        servoArmClaw = myOpMode.hardwareMap.get(Servo.class, "arm1"); //--- Arm Grabber / Claw XXX
+        servoArmWrist = myOpMode.hardwareMap.get(Servo.class, "arm2"); //--- Arm Wrist XXX
+        servoArmElbow = myOpMode.hardwareMap.get(Servo.class, "arm3"); //--- Arm Elbow XXX
+        servoArmShoulder = myOpMode.hardwareMap.get(Servo.class, "arm4"); //--- Arm Shoulder XXX
+
 
 
 
