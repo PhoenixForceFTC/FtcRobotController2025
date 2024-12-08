@@ -72,7 +72,7 @@ public class RobotHardware {
     //------------------------------------------------------------------------------------------
     //--- Utility Motors
     //------------------------------------------------------------------------------------------
-
+    public DcMotor motorIntakeExtend = null;
 
     //------------------------------------------------------------------------------------------
     //--- Servos
@@ -107,17 +107,10 @@ public class RobotHardware {
     //--- Constants
     //------------------------------------------------------------------------------------------
 
-    public double SERVO_INTAKE_LIFT_IN = 0.85;
-    public double SERVO_INTAKE_LIFT_OUT = 0.43;    //--- Out straight in front of robot
+    public static final double SERVO_INTAKE_LIFT_IN = 0.85;
+    public static final double SERVO_INTAKE_LIFT_OUT = 0.43;    //--- Out straight in front of robot
 
-
-    // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
-//    public static final double MID_SERVO       =  0.5 ;
-//    public static final double HAND_SPEED      =  0.02 ;  // sets rate to move servo
-//    public static final double ARM_UP_POWER    =  0.45 ;
-//    public static final double ARM_DOWN_POWER  = -0.45 ;
-
-    // Define a constructor that allows the OpMode to pass a reference to itself.
+    //--- Define a constructor that allows the OpMode to pass a reference to itself.
     public RobotHardware(LinearOpMode opmode) {
         myOpMode = opmode;
     }
@@ -130,17 +123,21 @@ public class RobotHardware {
         //------------------------------------------------------------------------------------------
         //--- Motor Config
         //------------------------------------------------------------------------------------------
-        //--- Motors
+        //--- Drive Motors
         motorDriveFrontLeft = myOpMode.hardwareMap.get(DcMotor.class, "fl");
         motorDriveRearLeft = myOpMode.hardwareMap.get(DcMotor.class, "rl");
         motorDriveFrontRight = myOpMode.hardwareMap.get(DcMotor.class, "fr");
         motorDriveRearRight = myOpMode.hardwareMap.get(DcMotor.class, "rr");
 
-        //--- Motor Directions
+        //--- Drive Motor Directions
         motorDriveFrontLeft.setDirection(DcMotor.Direction.FORWARD);
         motorDriveRearLeft.setDirection(DcMotor.Direction.FORWARD);
         motorDriveFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorDriveRearRight.setDirection(DcMotor.Direction.REVERSE);
+
+        //--- Utility Motors
+        motorIntakeExtend = myOpMode.hardwareMap.get(DcMotor.class, "in-arm");
+        motorIntakeExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //------------------------------------------------------------------------------------------
         //--- Servo Config
@@ -153,36 +150,13 @@ public class RobotHardware {
         servoIntakeLiftLeft = myOpMode.hardwareMap.get(Servo.class, "in-lup"); //--- Intake Left Up/Down
         servoIntakeLiftRight = myOpMode.hardwareMap.get(Servo.class, "in-rup"); //--- Intake Right Up/Down
 
-        servoArmClaw = myOpMode.hardwareMap.get(Servo.class, "arm1"); //--- Arm Grabber / Claw XXX
-        servoArmWrist = myOpMode.hardwareMap.get(Servo.class, "arm2"); //--- Arm Wrist XXX
-        servoArmElbow = myOpMode.hardwareMap.get(Servo.class, "arm3"); //--- Arm Elbow XXX
-        servoArmShoulder = myOpMode.hardwareMap.get(Servo.class, "arm4"); //--- Arm Shoulder XXX
+        servoArmClaw = myOpMode.hardwareMap.get(Servo.class, "arm1"); //--- Arm Grabber / Claw
+        servoArmWrist = myOpMode.hardwareMap.get(Servo.class, "arm2"); //--- Arm Wrist
+        servoArmElbow = myOpMode.hardwareMap.get(Servo.class, "arm3"); //--- Arm Elbow
+        servoArmShoulder = myOpMode.hardwareMap.get(Servo.class, "arm4"); //--- Arm Shoulder
 
-
-
-
-
-        //--- Servo Default Position
-//        _intakeUpDownLeft.setPosition(0.5);
-
-
-
-
-        // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
-        // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-
-        // Define and initialize ALL installed servos.
-//        leftHand = myOpMode.hardwareMap.get(Servo.class, "left_hand");
-//        rightHand = myOpMode.hardwareMap.get(Servo.class, "right_hand");
-//        leftHand.setPosition(MID_SERVO);
-//        rightHand.setPosition(MID_SERVO);
-
-        //inputArm = null;
-
-
+        //--- Configure Servos
+        //servoArmWrist.setDirection(Servo.Direction.REVERSE);
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.update();
