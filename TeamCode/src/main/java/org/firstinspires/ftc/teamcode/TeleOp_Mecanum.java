@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.utils.DriveUtils;
@@ -20,15 +21,26 @@ public class TeleOp_Mecanum extends LinearOpMode
     RobotHardware _robot = new RobotHardware(this);
     public ElapsedTime _runtime = new ElapsedTime();
 
-    double _servoPos = 0.3;    // Initial servo position
+    double _servoClawPos = 0.3;    // Initial servo position
+    double _servoWristPos = 0.3;
+    double _servoElbowPos = 0.3;
+    double _servoShoulderPos = 0.3;
 
-    //--- Need to know initialized states
-    boolean _initializedArmControl = false;
 
     StateMachine<Double> clawStateMachine = null;
     StateMachine<Double> wristStateMachine = null;
     StateMachine<Double> elbowStateMachine = null;
     StateMachine<Double> shoulderStateMachine = null;
+
+
+    //--- Constants for motorIntake positions
+    private static final int MOTOR_INTAKE_MAX_POSITION = 1000;    // Maximum position (fully extended)
+    private static final int MOTOR_INTAKE_MIN_POSITION = 0;       // Minimum position (fully retracted)
+    private static final int MOTOR_INTAKE_INCREMENT_EXTEND = 10;  // Increment value for extending
+    private static final int MOTOR_INTAKE_INCREMENT_RETRACT = 5;  // Increment value for retracting
+
+    private int _motorIntakeCurrentTarget = MOTOR_INTAKE_MIN_POSITION; // Start at the retracted position
+
 
     //------------------------------------------------------------------------------------------
     //--- OpMode
@@ -63,19 +75,88 @@ public class TeleOp_Mecanum extends LinearOpMode
             //------------------------------------------------------------------------------------------
             //--- Control Methods
             //------------------------------------------------------------------------------------------
-            DriveUtils.mecanumDrive(
-                    _robot.motorDriveFrontLeft, _robot.motorDriveFrontRight, _robot.motorDriveRearLeft, _robot.motorDriveRearRight,
-                    gamepad1, telemetry);
+//            DriveUtils.mecanumDrive(
+//                    _robot.motorDriveFrontLeft, _robot.motorDriveFrontRight, _robot.motorDriveRearLeft, _robot.motorDriveRearRight,
+//                    gamepad1, telemetry);
 
-            ArmControl(true);
+            //ArmControl(true);
 
-            //ArmClawControl(true);
-            //ArmWristFineTune(true);
-            //ArmElbowFineTune(true);
-            //ArmShoulderFineTune(true);
+//            ArmClawFineTune(true);
+//            ArmWristFineTune(true);
+//            ArmElbowFineTune(true);
+//            ArmShoulderFineTune(true);
 
             //IntakeLiftControl(true);
             //IntakeControl(true);
+
+            //--- Add code for motorIntake control
+//            if (gamepad1.left_trigger > 0.1) //--- Extend motorIntake when left trigger is pressed
+//            {
+//                _robot.motorIntake.setPower(gamepad1.left_trigger); //--- Scale power by trigger pressure
+//            }
+//            else if (gamepad1.left_bumper) //--- Retract motorIntake when left bumper is pressed
+//            {
+//                _robot.motorIntake.setPower(-1); //--- Full power in reverse
+//            }
+//            else
+//            {
+//                _robot.motorIntake.setPower(0); // Stop motorIntake when no input
+//            }
+
+
+            //--- Add code for motorIntake control
+//            if (gamepad1.left_trigger > 0.1) //--- Extend motorIntake when left trigger is pressed
+//            {
+//                _robot.motorLiftLeft.setPower(gamepad1.left_trigger);
+//                _robot.motorLiftRight.setPower(gamepad1.left_trigger);
+//            }
+//            else if (gamepad1.left_bumper) //--- Retract motorIntake when left bumper is pressed
+//            {
+//                _robot.motorLiftLeft.setPower(-1);
+//                _robot.motorLiftRight.setPower(-1);
+//            }
+//            else
+//            {
+//                _robot.motorLiftLeft.setPower(0);
+//                _robot.motorLiftRight.setPower(0);
+//            }
+
+            telemetry.addData("left_trigger", gamepad1.left_trigger);
+            telemetry.addData("left_bumper", gamepad1.left_bumper);
+
+            //--- Encoder-controlled motorIntake movement
+//            if (gamepad1.left_trigger > 0.1) { // Extend when left trigger is pressed
+//                _robot.motorIntake.setTargetPosition(MOTOR_INTAKE_EXTEND_POSITION);
+//                _robot.motorIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                _robot.motorIntake.setPower(1.0); // Set full power
+//            } else if (gamepad1.left_bumper) { // Retract when left bumper is pressed
+//                _robot.motorIntake.setTargetPosition(MOTOR_INTAKE_RETRACT_POSITION);
+//                _robot.motorIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                _robot.motorIntake.setPower(1.0); // Set full power
+//            } else {
+//                _robot.motorIntake.setPower(0); // Stop the motor when no input
+//            }
+
+            //--- Dynamic motorIntake control
+//            if (gamepad1.left_trigger > 0.1) { // Incrementally extend
+//                _motorIntakeCurrentTarget += MOTOR_INTAKE_INCREMENT_EXTEND;
+//                _motorIntakeCurrentTarget = Math.min(_motorIntakeCurrentTarget, MOTOR_INTAKE_MAX_POSITION); // Clamp to max
+//                _robot.motorIntake.setTargetPosition(_motorIntakeCurrentTarget);
+//                _robot.motorIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                _robot.motorIntake.setPower(1.0); // Full power
+//            } else if (gamepad1.left_bumper) { // Incrementally retract
+//                _motorIntakeCurrentTarget -= MOTOR_INTAKE_INCREMENT_RETRACT;
+//                _motorIntakeCurrentTarget = Math.max(_motorIntakeCurrentTarget, MOTOR_INTAKE_MIN_POSITION); // Clamp to min
+//                _robot.motorIntake.setTargetPosition(_motorIntakeCurrentTarget);
+//                _robot.motorIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                _robot.motorIntake.setPower(1.0); // Full power
+//            } else {
+//                _robot.motorIntake.setPower(0); // Stop motor when no input
+//            }
+
+            //--- Display intake motor telemetry
+//            telemetry.addData("motorIntake Target", _motorIntakeCurrentTarget);
+//            telemetry.addData("motorIntake Position", _robot.motorIntake.getCurrentPosition());
 
             //------------------------------------------------------------------------------------------
             //--- Update Telemetry Display
@@ -93,40 +174,63 @@ public class TeleOp_Mecanum extends LinearOpMode
         double clawOpenPos = 0.61;
         double clawClosedPos = 0.76;
 
-        double wristIntake = 0.03;
-        double wristDelivery = 0.69;
+        double wristIntake = 0.69;
+        double wristDelivery = 0.03;
 
         double elbowIntake = 0.31;
-        double elbowMiddle = 0.5;
-        double elbowUp = 0.7; //???
+        double elbowGrabbed = 0.38;
+        double elbowMiddle = 0.43;
+        double elbowUp = 0.13; //???
+        double elbowHooked = 0.05;
 
         double shoulderIntake = 0.75;
-        double shoulderMiddle = 0.14;
-        double shoulderFullBack = 0.14;
+        double shoulderMiddle = 0.59;
+        double shoulderFullBack = 0.40;
+        double shoulderHooked = 0.5;
 
-        //--- Position 1 -- arm is up out of the way
-        double claw1 = clawClosedPos;
+        //--- Position 0 -- arm is grabbing specimens
+        double claw1 = clawOpenPos;
         double wrist1 = wristIntake;
         double elbow1 = elbowMiddle;
         double shoulder1 = shoulderMiddle;
 
-        //--- Position 2 -- arm is positioned for the intake
-        double claw2 = clawOpenPos;
+        //--- Position 1 --- arm grabs specimens
+        double claw2 = clawClosedPos;
         double wrist2 = wristIntake;
-        double elbow2 = elbowIntake;
-        double shoulder2 = shoulderIntake;
+        double elbow2 = elbowMiddle;
+        double shoulder2 = shoulderMiddle;
 
-        //--- Position 3 -- arm is ready to deliver
+        //--- Position 2 --- arm moves up
         double claw3 = clawClosedPos;
-        double wrist3 = wristDelivery;
-        double elbow3 = elbowUp;
+        double wrist3 = wristIntake;
+        double elbow3 = elbowGrabbed;
         double shoulder3 = shoulderMiddle;
 
+        /*
+        //--- Position 3 -- arm is positioned for the intake
+        double claw4 = clawOpenPos;
+        double wrist4 = wristIntake;
+        double elbow4 = elbowIntake;
+        double shoulder4 = shoulderIntake;
+         */
+
+        //--- Position 3 -- arm is ready to deliver
+        double claw4 = clawClosedPos;
+        double wrist4 = wristDelivery;
+        double elbow4 = elbowUp;
+        double shoulder4 = shoulderFullBack;
+
+        //--- Position 4 --- specimen is hooked
+        double claw5 = clawClosedPos;
+        double wrist5 = wristDelivery;
+        double elbow5 = elbowHooked;
+        double shoulder5 = shoulderHooked;
+
         //--- State machine for each servo
-        clawStateMachine = new StateMachine<>(new ArrayList<>(Arrays.asList(claw1, claw2, claw3)));
-        wristStateMachine = new StateMachine<>(new ArrayList<>(Arrays.asList(wrist1, wrist2, wrist3)));
-        elbowStateMachine = new StateMachine<>(new ArrayList<>(Arrays.asList(elbow1, elbow2, elbow3)));
-        shoulderStateMachine = new StateMachine<>(new ArrayList<>(Arrays.asList(shoulder1, shoulder2, shoulder3)));
+        clawStateMachine = new StateMachine<>(new ArrayList<>(Arrays.asList(claw1, claw2, claw3, claw4, claw5)));
+        wristStateMachine = new StateMachine<>(new ArrayList<>(Arrays.asList(wrist1, wrist2, wrist3, wrist4, wrist5)));
+        elbowStateMachine = new StateMachine<>(new ArrayList<>(Arrays.asList(elbow1, elbow2, elbow3, elbow4, elbow5)));
+        shoulderStateMachine = new StateMachine<>(new ArrayList<>(Arrays.asList(shoulder1, shoulder2, shoulder3, shoulder4, shoulder5)));
     }
 
     private void ArmControl(boolean showInfo)
@@ -149,10 +253,7 @@ public class TeleOp_Mecanum extends LinearOpMode
 
         //--- Show messages
         if (showInfo) {
-            telemetry.addData("Claw Step Index", clawStateMachine.getCurrentStepIndex());
-            telemetry.addData("Wrist Step Index", wristStateMachine.getCurrentStepIndex());
-            telemetry.addData("Elbow Step Index", elbowStateMachine.getCurrentStepIndex());
-            telemetry.addData("Shoulder Step Index", shoulderStateMachine.getCurrentStepIndex());
+            telemetry.addData("-- State Index", clawStateMachine.getCurrentStepIndex());
 
             telemetry.addData("Claw Position", "%4.2f", _robot.servoArmClawPos);
             telemetry.addData("Wrist Position", "%4.2f", _robot.servoArmWristPos);
@@ -175,15 +276,20 @@ public class TeleOp_Mecanum extends LinearOpMode
         double maxPos = 1.0;       // Maximum servo position
 
         //--- Adjust servo position based on button presses
-        if (gamepad1.y) {
-            _servoPos = Math.min(_servoPos + incrementPos, maxPos);
-            _robot.servoArmClawPos = ServoUtils.moveToPosition(_robot.servoArmClaw, _servoPos);
+        if (gamepad2.x) {
+            //_servoPos = Math.min(_servoPos + incrementPos, maxPos);
+            //_robot.servoArmClawPos = ServoUtils.moveToPosition(_robot.servoArmClaw, _servoPos);
+            _servoClawPos = 0.61;
+            _robot.servoArmClawPos = ServoUtils.moveToPosition(_robot.servoArmClaw, _servoClawPos);
         }
-        if (gamepad1.a) {
-            _servoPos = Math.max(_servoPos - incrementPos, minPos);
-            _robot.servoArmClawPos = ServoUtils.moveToPosition(_robot.servoArmClaw, _servoPos);
+        if (gamepad2.b) {
+            //_servoPos = Math.max(_servoPos - incrementPos, minPos);
+            //_robot.servoArmClawPos = ServoUtils.moveToPosition(_robot.servoArmClaw, _servoPos);
+            _servoClawPos = 0.76;
+            _robot.servoArmClawPos = ServoUtils.moveToPosition(_robot.servoArmClaw, _servoClawPos);
+
         }
-        sleep(250);
+        sleep(50);
 
         //--- Show messages
         if (showInfo)
@@ -202,15 +308,19 @@ public class TeleOp_Mecanum extends LinearOpMode
         double maxPos = 1.0;       // Maximum servo position
 
         //--- Adjust servo position based on button presses
-        if (gamepad1.y) {
-            _servoPos = Math.min(_servoPos + incrementPos, maxPos);
-            _robot.servoArmWristPos = ServoUtils.moveToPosition(_robot.servoArmWrist, _servoPos);
+        if (gamepad1.x) {
+            //_servoPos = Math.min(_servoPos + incrementPos, maxPos);
+            //_robot.servoArmWristPos = ServoUtils.moveToPosition(_robot.servoArmWrist, _servoPos);
+            _servoWristPos = 0.03;
+            _robot.servoArmWristPos = ServoUtils.moveToPosition(_robot.servoArmWrist, _servoWristPos);
         }
-        if (gamepad1.a) {
-            _servoPos = Math.max(_servoPos - incrementPos, minPos);
-            _robot.servoArmWristPos = ServoUtils.moveToPosition(_robot.servoArmWrist, _servoPos);
+        if (gamepad1.b) {
+            //_servoPos = Math.max(_servoPos - incrementPos, minPos);
+            //_robot.servoArmWristPos = ServoUtils.moveToPosition(_robot.servoArmWrist, _servoPos);
+            _servoWristPos = 0.69;
+            _robot.servoArmWristPos = ServoUtils.moveToPosition(_robot.servoArmWrist, _servoWristPos);
         }
-        sleep(250);
+        sleep(50);
 
         //--- Show messages
         if (showInfo)
@@ -230,14 +340,14 @@ public class TeleOp_Mecanum extends LinearOpMode
 
         //--- Adjust servo position based on button presses
         if (gamepad1.y) {
-            _servoPos = Math.min(_servoPos + incrementPos, maxPos);
-            _robot.servoArmElbowPos = ServoUtils.moveToPosition(_robot.servoArmElbow, _servoPos);
+            _servoElbowPos = Math.min(_servoElbowPos + incrementPos, maxPos);
+            _robot.servoArmElbowPos = ServoUtils.moveToPosition(_robot.servoArmElbow, _servoElbowPos);
         }
         if (gamepad1.a) {
-            _servoPos = Math.max(_servoPos - incrementPos, minPos);
-            _robot.servoArmElbowPos = ServoUtils.moveToPosition(_robot.servoArmElbow, _servoPos);
+            _servoElbowPos = Math.max(_servoElbowPos - incrementPos, minPos);
+            _robot.servoArmElbowPos = ServoUtils.moveToPosition(_robot.servoArmElbow, _servoElbowPos);
         }
-        sleep(250);
+        sleep(50);
 
         //--- Show messages
         if (showInfo)
@@ -256,20 +366,20 @@ public class TeleOp_Mecanum extends LinearOpMode
         double maxPos = 1.0;       // Maximum servo position
 
         //--- Adjust servo position based on button presses
-        if (gamepad1.y) {
-            _servoPos = Math.min(_servoPos + incrementPos, maxPos);
-            _robot.servoArmShoulderPos = ServoUtils.moveToPosition(_robot.servoArmShoulder, _servoPos);
+        if (gamepad2.y) {
+            _servoShoulderPos = Math.min(_servoShoulderPos + incrementPos, maxPos);
+            _robot.servoArmShoulderPos = ServoUtils.moveToPosition(_robot.servoArmShoulder, _servoShoulderPos);
         }
-        if (gamepad1.a) {
-            _servoPos = Math.max(_servoPos - incrementPos, minPos);
-            _robot.servoArmShoulderPos = ServoUtils.moveToPosition(_robot.servoArmShoulder, _servoPos);
+        if (gamepad2.a) {
+            _servoShoulderPos = Math.max(_servoShoulderPos - incrementPos, minPos);
+            _robot.servoArmShoulderPos = ServoUtils.moveToPosition(_robot.servoArmShoulder, _servoShoulderPos);
         }
-        sleep(250);
+        sleep(50);
 
         //--- Show messages
         if (showInfo)
         {
-            telemetry.addData("Arm Elbow", "%4.2f", _robot.servoArmShoulderPos);
+            telemetry.addData("Arm Shoulder", "%4.2f", _robot.servoArmShoulderPos);
         }
     }
 

@@ -30,7 +30,7 @@ Servo
 Motor
 0 - rl (Read Left)
 1 - rr (Read Right)
-2 - in-arm (intake extension arm)
+2 - in-arm (Intake Extension Arm)
 3 -
 
 Servo
@@ -72,7 +72,9 @@ public class RobotHardware {
     //------------------------------------------------------------------------------------------
     //--- Utility Motors
     //------------------------------------------------------------------------------------------
-    public DcMotor motorIntakeExtend = null;
+    public DcMotor motorIntake = null;
+    public DcMotor motorLiftLeft = null;
+    public DcMotor motorLiftRight = null;
 
     //------------------------------------------------------------------------------------------
     //--- Servos
@@ -136,15 +138,23 @@ public class RobotHardware {
         motorDriveRearRight.setDirection(DcMotor.Direction.REVERSE);
 
         //--- Utility Motors
-        motorIntakeExtend = myOpMode.hardwareMap.get(DcMotor.class, "in-arm");
-        motorIntakeExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorIntake = myOpMode.hardwareMap.get(DcMotor.class, "in-arm"); //--- Intake Extension Arm
+        motorLiftLeft = myOpMode.hardwareMap.get(DcMotor.class, "upl"); //--- Lifting Arm Left
+        motorLiftRight = myOpMode.hardwareMap.get(DcMotor.class, "upr"); //--- Lifting Arm Right
+
+        motorIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //motorIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLiftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //motorLiftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //motorLiftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //------------------------------------------------------------------------------------------
         //--- Servo Config
         //------------------------------------------------------------------------------------------
         //--- Servos (Continuous)
-        servoIntakeSpinRight = myOpMode.hardwareMap.get(CRServo.class, "in-rspin"); //--- Intake Right Spinner (Continuous)
-        servoIntakeSpinLeft = myOpMode.hardwareMap.get(CRServo.class, "in-lspin"); //--- Intake Left Spinner (Continuous)
+        servoIntakeSpinRight = myOpMode.hardwareMap.get(CRServo.class, "in-rspin"); //--- Intake Right Spinner
+        servoIntakeSpinLeft = myOpMode.hardwareMap.get(CRServo.class, "in-lspin"); //--- Intake Left Spinner
 
         //--- Servos (Positional)
         servoIntakeLiftLeft = myOpMode.hardwareMap.get(Servo.class, "in-lup"); //--- Intake Left Up/Down
