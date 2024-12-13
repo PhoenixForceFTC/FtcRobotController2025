@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /*
@@ -72,7 +73,7 @@ public class RobotHardware {
     //------------------------------------------------------------------------------------------
     //--- Utility Motors
     //------------------------------------------------------------------------------------------
-    public DcMotor motorIntake = null;
+    public DcMotorEx motorIntake = null;
     public DcMotor motorLiftLeft = null;
     public DcMotor motorLiftRight = null;
 
@@ -138,16 +139,23 @@ public class RobotHardware {
         motorDriveRearRight.setDirection(DcMotor.Direction.REVERSE);
 
         //--- Utility Motors
-        motorIntake = myOpMode.hardwareMap.get(DcMotor.class, "in-arm"); //--- Intake Extension Arm
+        motorIntake = myOpMode.hardwareMap.get(DcMotorEx.class, "in-arm"); //--- Intake Extension Arm
         motorLiftLeft = myOpMode.hardwareMap.get(DcMotor.class, "upl"); //--- Lifting Arm Left
         motorLiftRight = myOpMode.hardwareMap.get(DcMotor.class, "upr"); //--- Lifting Arm Right
 
-        motorIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //motorIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorLiftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //motorLiftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //motorLiftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        motorIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorLiftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        motorLiftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        motorLiftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+//        double NEW_P = 2.5;
+//        double NEW_I = 0.1;
+//        double NEW_D = 0.2;
+//        double NEW_F = 0.5;
+//
+//        motorIntake.setVelocityPIDFCoefficients();
 
         //------------------------------------------------------------------------------------------
         //--- Servo Config

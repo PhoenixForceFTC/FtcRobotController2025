@@ -34,7 +34,7 @@ public class TeleOp_Mecanum extends LinearOpMode
 
 
     //--- Constants for motorIntake positions
-    private static final int MOTOR_INTAKE_MAX_POSITION = 1000;    // Maximum position (fully extended)
+    private static final int MOTOR_INTAKE_MAX_POSITION = 100;    // Maximum position (fully extended)
     private static final int MOTOR_INTAKE_MIN_POSITION = 0;       // Minimum position (fully retracted)
     private static final int MOTOR_INTAKE_INCREMENT_EXTEND = 10;  // Increment value for extending
     private static final int MOTOR_INTAKE_INCREMENT_RETRACT = 5;  // Increment value for retracting
@@ -125,38 +125,58 @@ public class TeleOp_Mecanum extends LinearOpMode
             telemetry.addData("left_bumper", gamepad1.left_bumper);
 
             //--- Encoder-controlled motorIntake movement
-//            if (gamepad1.left_trigger > 0.1) { // Extend when left trigger is pressed
-//                _robot.motorIntake.setTargetPosition(MOTOR_INTAKE_EXTEND_POSITION);
+//            if (gamepad1.left_trigger > 0.1) //--- Extend when left trigger is pressed
+//            {
+//                _robot.motorIntake.setTargetPosition(MOTOR_INTAKE_MAX_POSITION);
 //                _robot.motorIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //                _robot.motorIntake.setPower(1.0); // Set full power
-//            } else if (gamepad1.left_bumper) { // Retract when left bumper is pressed
-//                _robot.motorIntake.setTargetPosition(MOTOR_INTAKE_RETRACT_POSITION);
+//            }
+//            else if (gamepad1.left_bumper) //--- Retract when left bumper is pressed
+//            {
+//                _robot.motorIntake.setTargetPosition(MOTOR_INTAKE_MIN_POSITION);
 //                _robot.motorIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //                _robot.motorIntake.setPower(1.0); // Set full power
-//            } else {
-//                _robot.motorIntake.setPower(0); // Stop the motor when no input
+//            }
+//            else //--- Stop the motor when no input
+//            {
+//                _robot.motorIntake.setPower(0);
 //            }
 
+            if (gamepad1.x)
+            {
+                _robot.motorIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
+
+
+//            telemetry.addData("motorIntake Position", _robot.motorIntake.getCurrentPosition());
+//            telemetry.addData("motorIntake Target", _robot.motorIntake.getTargetPosition());
+
             //--- Dynamic motorIntake control
-//            if (gamepad1.left_trigger > 0.1) { // Incrementally extend
-//                _motorIntakeCurrentTarget += MOTOR_INTAKE_INCREMENT_EXTEND;
-//                _motorIntakeCurrentTarget = Math.min(_motorIntakeCurrentTarget, MOTOR_INTAKE_MAX_POSITION); // Clamp to max
-//                _robot.motorIntake.setTargetPosition(_motorIntakeCurrentTarget);
-//                _robot.motorIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                _robot.motorIntake.setPower(1.0); // Full power
-//            } else if (gamepad1.left_bumper) { // Incrementally retract
-//                _motorIntakeCurrentTarget -= MOTOR_INTAKE_INCREMENT_RETRACT;
-//                _motorIntakeCurrentTarget = Math.max(_motorIntakeCurrentTarget, MOTOR_INTAKE_MIN_POSITION); // Clamp to min
-//                _robot.motorIntake.setTargetPosition(_motorIntakeCurrentTarget);
-//                _robot.motorIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                _robot.motorIntake.setPower(1.0); // Full power
-//            } else {
+            if (gamepad1.left_trigger > 0.1) //--- Incrementally extend
+            {
+                _motorIntakeCurrentTarget += MOTOR_INTAKE_INCREMENT_EXTEND;
+                _motorIntakeCurrentTarget = Math.min(_motorIntakeCurrentTarget, MOTOR_INTAKE_MAX_POSITION); // Clamp to max
+                _robot.motorIntake.setTargetPosition(_motorIntakeCurrentTarget);
+                _robot.motorIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                _robot.motorIntake.setPower(1.0);
+            }
+            else if (gamepad1.left_bumper) //--- Incrementally retract
+            {
+                _motorIntakeCurrentTarget -= MOTOR_INTAKE_INCREMENT_RETRACT;
+                _motorIntakeCurrentTarget = Math.max(_motorIntakeCurrentTarget, MOTOR_INTAKE_MIN_POSITION); // Clamp to min
+                _robot.motorIntake.setTargetPosition(_motorIntakeCurrentTarget);
+                _robot.motorIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                _robot.motorIntake.setPower(1.0);
+            }
+//            else
+//            {
 //                _robot.motorIntake.setPower(0); // Stop motor when no input
 //            }
 
             //--- Display intake motor telemetry
-//            telemetry.addData("motorIntake Target", _motorIntakeCurrentTarget);
-//            telemetry.addData("motorIntake Position", _robot.motorIntake.getCurrentPosition());
+            telemetry.addData("motorIntake Position", _robot.motorIntake.getCurrentPosition());
+            telemetry.addData("motorIntake Target", _motorIntakeCurrentTarget);
+
 
             //------------------------------------------------------------------------------------------
             //--- Update Telemetry Display
