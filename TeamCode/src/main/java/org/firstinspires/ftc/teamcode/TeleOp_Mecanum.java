@@ -1,16 +1,46 @@
 package org.firstinspires.ftc.teamcode;
 
+//region -- Imports ---
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.utils.DriveUtils;
+import org.firstinspires.ftc.teamcode.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.utils.ServoUtils;
 import org.firstinspires.ftc.teamcode.utils.StateMachine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+//endregion
+
+//----------------------------------------------------------------------
+// Gamepad 1
+//  - Left Stick    - Mecanum Drive
+//  - Right Stick   - Mecanum Turning
+//  - Dpad Up       -    //Moving forward
+//  - Dpad Down     -    //Moving backward
+//  - Dpad Right    -    //Moving right
+//  - Dpad Left     -    //Moving left
+//  - Left Trigger  - Intake Arm Out
+//  - Left Bumpers  - Intake Arm Back
+//  - Right Trigger -
+//  - Right Bumpers -
+//  - X             -    //Speed slow
+//  - Y             -    //Speed medium
+//  - B             -    //Speed fast
+//
+// Gamepad 2
+//  - Dpad Up       -    //Arm up
+//  - Dpad Down     -    //Arm down
+//  - Right Trigger -
+//  - L/R Bumpers   -
+//  - Y             -    //Intake
+//  - A             -    //Output
+//  - B             -    //Releas intake
+//  - Right stick   -    //Eye movement
+//----------------------------------------------------------------------
 
 @TeleOp(name="Mecanum Drive", group="TeleOp")
 public class TeleOp_Mecanum extends LinearOpMode
@@ -89,7 +119,9 @@ public class TeleOp_Mecanum extends LinearOpMode
             //IntakeLiftControl(true);
             //IntakeControl(true);
 
-            //--- Add code for motorIntake control
+            //------------------------------------------------------------------------------------------
+            //--- Intake Motor - Drive by Power
+            //------------------------------------------------------------------------------------------
 //            if (gamepad1.left_trigger > 0.1) //--- Extend motorIntake when left trigger is pressed
 //            {
 //                _robot.motorIntake.setPower(gamepad1.left_trigger); //--- Scale power by trigger pressure
@@ -104,7 +136,9 @@ public class TeleOp_Mecanum extends LinearOpMode
 //            }
 
 
-            //--- Add code for motorIntake control
+            //------------------------------------------------------------------------------------------
+            //--- Lift Motors - Drive by Power
+            //------------------------------------------------------------------------------------------
 //            if (gamepad1.left_trigger > 0.1) //--- Extend motorIntake when left trigger is pressed
 //            {
 //                _robot.motorLiftLeft.setPower(gamepad1.left_trigger);
@@ -121,62 +155,34 @@ public class TeleOp_Mecanum extends LinearOpMode
 //                _robot.motorLiftRight.setPower(0);
 //            }
 
-            telemetry.addData("left_trigger", gamepad1.left_trigger);
-            telemetry.addData("left_bumper", gamepad1.left_bumper);
 
+            //------------------------------------------------------------------------------------------
+            //--- Intake Motor - Drive by Encoder Position
+            //--- Advantage of moving the motor with Encoder Position, is we can set the distance limits
+            //------------------------------------------------------------------------------------------
             //--- Encoder-controlled motorIntake movement
-//            if (gamepad1.left_trigger > 0.1) //--- Extend when left trigger is pressed
-//            {
-//                _robot.motorIntake.setTargetPosition(MOTOR_INTAKE_MAX_POSITION);
-//                _robot.motorIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                _robot.motorIntake.setPower(1.0); // Set full power
-//            }
-//            else if (gamepad1.left_bumper) //--- Retract when left bumper is pressed
-//            {
-//                _robot.motorIntake.setTargetPosition(MOTOR_INTAKE_MIN_POSITION);
-//                _robot.motorIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                _robot.motorIntake.setPower(1.0); // Set full power
-//            }
-//            else //--- Stop the motor when no input
-//            {
-//                _robot.motorIntake.setPower(0);
-//            }
+            if (gamepad1.left_trigger > 0.1) //--- Extend when left trigger is pressed
+            {
+                MotorUtils.setTargetPosition(_robot.motorIntake, MOTOR_INTAKE_MAX_POSITION, 1.0);
+            }
+            else if (gamepad1.left_bumper) //--- Retract when left bumper is pressed
+            {
+                MotorUtils.setTargetPosition(_robot.motorIntake, MOTOR_INTAKE_MIN_POSITION, 1.0);
+            }
+            else
+            {
+                //--- Stop the motor when no input
+                //--- NOTE this will stop the motor at whatever position it is at when the trigger or bumper is released
+                MotorUtils.stopMotor(_robot.motorIntake);
+            }
 
             if (gamepad1.x)
             {
-                _robot.motorIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                MotorUtils.resetEncoder(_robot.motorIntake);
             }
 
-
-//            telemetry.addData("motorIntake Position", _robot.motorIntake.getCurrentPosition());
-//            telemetry.addData("motorIntake Target", _robot.motorIntake.getTargetPosition());
-
-            //--- Dynamic motorIntake control
-            if (gamepad1.left_trigger > 0.1) //--- Incrementally extend
-            {
-                _motorIntakeCurrentTarget += MOTOR_INTAKE_INCREMENT_EXTEND;
-                _motorIntakeCurrentTarget = Math.min(_motorIntakeCurrentTarget, MOTOR_INTAKE_MAX_POSITION); // Clamp to max
-                _robot.motorIntake.setTargetPosition(_motorIntakeCurrentTarget);
-                _robot.motorIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                _robot.motorIntake.setPower(1.0);
-            }
-            else if (gamepad1.left_bumper) //--- Incrementally retract
-            {
-                _motorIntakeCurrentTarget -= MOTOR_INTAKE_INCREMENT_RETRACT;
-                _motorIntakeCurrentTarget = Math.max(_motorIntakeCurrentTarget, MOTOR_INTAKE_MIN_POSITION); // Clamp to min
-                _robot.motorIntake.setTargetPosition(_motorIntakeCurrentTarget);
-                _robot.motorIntake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                _robot.motorIntake.setPower(1.0);
-            }
-//            else
-//            {
-//                _robot.motorIntake.setPower(0); // Stop motor when no input
-//            }
-
-            //--- Display intake motor telemetry
             telemetry.addData("motorIntake Position", _robot.motorIntake.getCurrentPosition());
-            telemetry.addData("motorIntake Target", _motorIntakeCurrentTarget);
-
+            telemetry.addData("motorIntake Target", _robot.motorIntake.getTargetPosition());
 
             //------------------------------------------------------------------------------------------
             //--- Update Telemetry Display

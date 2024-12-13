@@ -1,16 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+//region --- Imports ---
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+//endregion
 
+//region --- Control Hub Config ---
 /*
- * --- Control Hub
- *
- * ------------------------------------------------------------
- *
 Motor
 0 - upl (Lifting Arm Left) + Encoder
 1 - upr (Lifting Arm Righ) + Encoder
@@ -24,10 +23,11 @@ Servo
 3 - in-lup (Intake Left Up/Down)
 4 - in-rup (Intake Right Up/Down)
 5 -
+*/
+//endregion
 
- * ------------------------------------------------------------
- *
---- Expansion Hub
+//region --- Expansion Hub Config ---
+/*
 Motor
 0 - rl (Read Left)
 1 - rr (Read Right)
@@ -47,9 +47,8 @@ I2C
 1 -
 2 - camera
 3 - odom (odometry)
-
- * ------------------------------------------------------------
- */
+*/
+//endregion
 
 public class RobotHardware {
 
@@ -73,7 +72,7 @@ public class RobotHardware {
     //------------------------------------------------------------------------------------------
     //--- Utility Motors
     //------------------------------------------------------------------------------------------
-    public DcMotorEx motorIntake = null;
+    public DcMotor motorIntake = null;
     public DcMotor motorLiftLeft = null;
     public DcMotor motorLiftRight = null;
 
@@ -139,23 +138,18 @@ public class RobotHardware {
         motorDriveRearRight.setDirection(DcMotor.Direction.REVERSE);
 
         //--- Utility Motors
-        motorIntake = myOpMode.hardwareMap.get(DcMotorEx.class, "in-arm"); //--- Intake Extension Arm
+        motorIntake = myOpMode.hardwareMap.get(DcMotor.class, "in-arm"); //--- Intake Extension Arm
         motorLiftLeft = myOpMode.hardwareMap.get(DcMotor.class, "upl"); //--- Lifting Arm Left
         motorLiftRight = myOpMode.hardwareMap.get(DcMotor.class, "upr"); //--- Lifting Arm Right
 
-//        motorIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        motorIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motorLiftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        motorLiftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        motorLiftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-//        double NEW_P = 2.5;
-//        double NEW_I = 0.1;
-//        double NEW_D = 0.2;
-//        double NEW_F = 0.5;
-//
-//        motorIntake.setVelocityPIDFCoefficients();
+        motorLiftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLiftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        motorLiftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //------------------------------------------------------------------------------------------
         //--- Servo Config
