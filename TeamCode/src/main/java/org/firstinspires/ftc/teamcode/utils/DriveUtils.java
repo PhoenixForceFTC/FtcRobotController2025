@@ -7,21 +7,69 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class DriveUtils {
 
-    //--- Drives a robot with mecanum wheels
-    public static void arcadeDrive(DcMotor frontLeft, DcMotor frontRight, DcMotor rearLeft, DcMotor rearRight, Gamepad gamepad, Telemetry telemetry, boolean showInfo)
+    //--- Constants for Speed Multipliers
+    private static final double SPEED_HIGH = 1.0;
+    private static final double SPEED_SLOW = 0.5;
+
+    private static final double SPEED_ROTATE_HIGH = 0.8;
+    private static final double SPEED_ROTATE_SLOW = 0.4;
+
+    //--- State Variables for Toggles
+    private static boolean isHighSpeed = true; //--- High by default
+    private static boolean isHighRotateSpeed = false; //--- Slow by default
+    private static boolean wasLeftStickButtonPressed = false;
+    private static boolean wasRightStickButtonPressed = false;
+
+    //--- Arcade Drive Method with High/Low speed controls
+    public static void arcadeDriveSpeedControl(DcMotor frontLeft, DcMotor frontRight, DcMotor rearLeft, DcMotor rearRight,
+                                               Gamepad gamepad, Telemetry telemetry, boolean showInfo)
+    {
+        //--- Handle toggling movement speed with the left stick button
+        if (gamepad.left_stick_button && !wasLeftStickButtonPressed)
+        {
+            isHighSpeed = !isHighSpeed; // Toggle the movement speed mode
+        }
+        wasLeftStickButtonPressed = gamepad.left_stick_button; // Update button state
+
+        //--- Handle toggling rotation speed with the right stick button
+        if (gamepad.right_stick_button && !wasRightStickButtonPressed)
+        {
+            isHighRotateSpeed = !isHighRotateSpeed; // Toggle the rotation speed mode
+        }
+        wasRightStickButtonPressed = gamepad.right_stick_button; // Update button state
+
+        //--- Determine speed multipliers
+        double speedMultiplier = isHighSpeed ? SPEED_HIGH : SPEED_SLOW;
+        double speedMultiplierRotate = isHighRotateSpeed ? SPEED_ROTATE_HIGH : SPEED_ROTATE_SLOW;
+
+        //--- Drive Logic
+        arcadeDrive(frontLeft, frontRight, rearLeft, rearRight, gamepad, telemetry, showInfo, speedMultiplier, speedMultiplierRotate);
+
+        //--- Show telemetry for the speed modes
+        if (showInfo)
+        {
+            telemetry.addData("Speed Mode", isHighSpeed ? "High" : "Slow");
+            telemetry.addData("Rotate Speed Mode", isHighRotateSpeed ? "High" : "Slow");
+        }
+    }
+
+    //--- Arcade Drive Method
+    public static void arcadeDrive(DcMotor frontLeft, DcMotor frontRight, DcMotor rearLeft, DcMotor rearRight,
+                                   Gamepad gamepad, Telemetry telemetry, boolean showInfo,
+                                   double speedMultiplier, double speedMultiplierRotate)
     {
         double max;
 
         //--- POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
         double axial = -gamepad.left_stick_y;  //--- Note, pushing stick forward gives negative value
         double lateral = gamepad.left_stick_x;
-        double yaw = gamepad.right_stick_x;
+        double yaw = gamepad.right_stick_x * speedMultiplierRotate; // Scale yaw separately
 
         //--- Combine the joystick requests for each axis-motion to determine each wheel's power.
-        double leftFrontPower = axial + lateral + yaw;
-        double rightFrontPower = axial - lateral - yaw;
-        double leftBackPower = axial - lateral + yaw;
-        double rightBackPower = axial + lateral - yaw;
+        double leftFrontPower = (axial + lateral + yaw) * speedMultiplier;
+        double rightFrontPower = (axial - lateral - yaw) * speedMultiplier;
+        double leftBackPower = (axial - lateral + yaw) * speedMultiplier;
+        double rightBackPower = (axial + lateral - yaw) * speedMultiplier;
 
         //--- Normalize the values so no wheel power exceeds 100%
         max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));

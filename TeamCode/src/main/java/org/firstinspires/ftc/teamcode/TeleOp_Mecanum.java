@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.utils.DriveUtils;
 import org.firstinspires.ftc.teamcode.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.utils.ServoUtils;
@@ -82,10 +83,6 @@ public class TeleOp_Mecanum extends LinearOpMode
     StateMachine<Double> shoulderStateMachine = null;
 
 
-    //--- Constants for motorIntake positions
-    private static final int MOTOR_INTAKE_MAX_POSITION = 150;     //--- Maximum position (fully extended)
-    private static final int MOTOR_INTAKE_MIN_POSITION = -30;     //--- Minimum position (fully retracted)
-
     boolean _showInfo = true; //--- Show telemetry output
 
     //------------------------------------------------------------------------------------------
@@ -134,7 +131,7 @@ public class TeleOp_Mecanum extends LinearOpMode
             );
 
             //--- Joysticks for mecanum movement
-            DriveUtils.arcadeDrive(
+            DriveUtils.arcadeDriveSpeedControl(
                     _robot.motorDriveFrontLeft,
                     _robot.motorDriveFrontRight,
                     _robot.motorDriveRearLeft,
@@ -143,8 +140,12 @@ public class TeleOp_Mecanum extends LinearOpMode
                     telemetry,
                     _showInfo
             );
-
-
+            
+            //------------------------------------------------------------------------------------------
+            //--- Intake Motor
+            //------------------------------------------------------------------------------------------
+            Intake.intakeByPower(_robot.motorIntake, gamepad1, telemetry, _showInfo);
+            //Intake.intakeByEncoder(_robot.motorIntake, gamepad1, telemetry, _showInfo);
 
 
             //ArmControl(true);
@@ -155,23 +156,9 @@ public class TeleOp_Mecanum extends LinearOpMode
 //            ArmShoulderFineTune(true);
 
             //IntakeLiftControl(true);
-            //IntakeControl(true);
+            intakeSpinners(true);
 
-            //------------------------------------------------------------------------------------------
-            //--- Intake Motor - Drive by Power
-            //------------------------------------------------------------------------------------------
-            if (gamepad1.left_trigger > 0.1) //--- Extend motorIntake when left trigger is pressed
-            {
-                _robot.motorIntake.setPower(gamepad1.left_trigger); //--- Scale power by trigger pressure
-            }
-            else if (gamepad1.left_bumper) //--- Retract motorIntake when left bumper is pressed
-            {
-                _robot.motorIntake.setPower(-1); //--- Full power in reverse
-            }
-            else
-            {
-                _robot.motorIntake.setPower(0); // Stop motorIntake when no input
-            }
+
 
 
             //------------------------------------------------------------------------------------------
@@ -194,25 +181,7 @@ public class TeleOp_Mecanum extends LinearOpMode
 //            }
 
 
-            //------------------------------------------------------------------------------------------
-            //--- Intake Motor - Drive by Encoder Position
-            //--- Advantage of moving the motor with Encoder Position, is we can set the distance limits
-            //------------------------------------------------------------------------------------------
-            //--- Encoder-controlled motorIntake movement
-//            if (gamepad1.left_trigger > 0.1) //--- Extend when left trigger is pressed
-//            {
-//                MotorUtils.setTargetPosition(_robot.motorIntake, MOTOR_INTAKE_MAX_POSITION, 1.0);
-//            }
-//            else if (gamepad1.left_bumper) //--- Retract when left bumper is pressed
-//            {
-//                MotorUtils.setTargetPosition(_robot.motorIntake, MOTOR_INTAKE_MIN_POSITION, 1.0);
-//            }
-//            else
-//            {
-//                //--- Stop the motor when no input
-//                //--- NOTE this will stop the motor at whatever position it is at when the trigger or bumper is released
-//                MotorUtils.stopMotor(_robot.motorIntake);
-//            }
+
 //
 //            if (gamepad1.x)
 //            {
@@ -452,7 +421,7 @@ public class TeleOp_Mecanum extends LinearOpMode
 
     //region --- Intake ---
 
-    private void IntakeLiftControl(boolean showInfo)
+    private void intakeLiftControl(boolean showInfo)
     {
         //TODO: Refactor into it's own class -- Intake
 
@@ -477,20 +446,23 @@ public class TeleOp_Mecanum extends LinearOpMode
         }
     }
 
-    private void IntakeControl(boolean showInfo)
+    private void intakeSpinners(boolean showInfo)
     {
         if (gamepad1.y)
         {
+            //--- Outtake
             _robot.servoIntakeSpinLeft.setPower(-1);
             _robot.servoIntakeSpinRight.setPower(1);
         }
         if (gamepad1.a)
         {
+            //--- Intake
             _robot.servoIntakeSpinLeft.setPower(1);
             _robot.servoIntakeSpinRight.setPower(-1);
         }
         if (gamepad1.b)
         {
+            //--- Stop
             _robot.servoIntakeSpinLeft.setPower(0);
             _robot.servoIntakeSpinRight.setPower(0);
         }
