@@ -140,19 +140,10 @@ public class TeleOp_Mecanum extends LinearOpMode
             //------------------------------------------------------------------------------------------
             //--- Intake
             //------------------------------------------------------------------------------------------
-            Intake.intakeByPower(
-                    _robot.motorIntake,
-                    _robot.servoIntakeSpinLeft,
-                    _robot.servoIntakeSpinRight,
-                    gamepad1, telemetry, _showInfo
-            );
+            _robot.intake.intakeByPower();
+//            _robot.intake.intakeByEncoder();
 
-//            Intake.intakeByEncoder(
-//                    _robot.motorIntake,
-//                    _robot.servoIntakeSpinLeft,
-//                    _robot.servoIntakeSpinRight,
-//                    gamepad1, telemetry, _showInfo
-//            );
+
 
 
 
@@ -410,34 +401,6 @@ public class TeleOp_Mecanum extends LinearOpMode
         if (showInfo)
         {
             telemetry.addData("Arm Shoulder", "%4.2f", _robot.servoArmShoulderPos);
-        }
-    }
-
-    //endregion
-
-    //region --- Intake ---
-
-    private void intakeLiftControl(boolean showInfo)
-    {
-        //TODO: Refactor into it's own class -- Intake
-
-            //--- Intake Lift In
-            _robot.servoIntakeLiftLeftPos = ServoUtils.moveToPosition(_robot.servoIntakeLiftLeft, _robot.SERVO_INTAKE_LIFT_IN);
-            _robot.servoIntakeLiftRightPos = ServoUtils.moveToPosition(_robot.servoIntakeLiftRight, _robot.SERVO_INTAKE_LIFT_IN);
-
-            //--- Intake Lift Out and Hold
-            _robot.servoIntakeLiftLeftPos = ServoUtils.moveToPosition(_robot.servoIntakeLiftLeft, _robot.SERVO_INTAKE_LIFT_OUT);
-            _robot.servoIntakeLiftRightPos = ServoUtils.moveToPosition(_robot.servoIntakeLiftRight, _robot.SERVO_INTAKE_LIFT_OUT);
-
-            //--- Intake Lift Out and Drop
-            _robot.servoIntakeLiftLeftPos = ServoUtils.moveToPositionAndDisable(_robot.servoIntakeLiftLeft, _robot.SERVO_INTAKE_LIFT_OUT, 750);
-            _robot.servoIntakeLiftRightPos = ServoUtils.moveToPositionAndDisable(_robot.servoIntakeLiftRight, _robot.SERVO_INTAKE_LIFT_OUT, 750);
-
-        //--- Show messages
-        if (showInfo)
-        {
-            telemetry.addData("Intake Lift Left", "%4.2f", _robot.servoIntakeLiftLeftPos);
-            telemetry.addData("Intake Lift Right", "%4.2f", _robot.servoIntakeLiftRightPos);
         }
     }
 

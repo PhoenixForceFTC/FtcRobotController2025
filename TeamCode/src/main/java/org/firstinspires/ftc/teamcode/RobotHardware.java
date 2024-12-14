@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.hardware.Intake;
 //endregion
 
 //region --- Control Hub Config ---
@@ -58,10 +60,6 @@ public class RobotHardware {
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
 
     //------------------------------------------------------------------------------------------
-    //--- Utility
-    //------------------------------------------------------------------------------------------
-
-    //------------------------------------------------------------------------------------------
     //--- Drive Motors
     //------------------------------------------------------------------------------------------
     public DcMotor motorDriveFrontRight = null;
@@ -106,13 +104,13 @@ public class RobotHardware {
     public double servoArmClawPos = 0.0;
 
     //------------------------------------------------------------------------------------------
-    //--- Constants
+    //--- Custom Hardware Classes
     //------------------------------------------------------------------------------------------
+    public Intake intake;
 
-    public static final double SERVO_INTAKE_LIFT_IN = 0.85;
-    public static final double SERVO_INTAKE_LIFT_OUT = 0.43;    //--- Out straight in front of robot
-
-    //--- Define a constructor that allows the OpMode to pass a reference to itself.
+    //------------------------------------------------------------------------------------------
+    //--- Define a constructor that allows the OpMode to pass a reference to itself
+    //------------------------------------------------------------------------------------------
     public RobotHardware(LinearOpMode opmode) {
         myOpMode = opmode;
     }
@@ -169,6 +167,20 @@ public class RobotHardware {
 
         //--- Configure Servos
         //servoArmWrist.setDirection(Servo.Direction.REVERSE);
+
+        //------------------------------------------------------------------------------------------
+        //--- Intake Subsystem
+        //------------------------------------------------------------------------------------------
+        intake = new Intake(
+                motorIntake,
+                servoIntakeSpinLeft,
+                servoIntakeSpinRight,
+                servoIntakeLiftLeft,
+                servoIntakeLiftRight,
+                myOpMode.gamepad1,
+                myOpMode.telemetry,
+                true //--- Default to show telemetry
+        );
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.update();
