@@ -19,24 +19,24 @@ import java.util.Arrays;
 //----------------------------------------------------------------------
 // Gamepad 1 -----------------------------------------------------------
 //  - Left Stick        - Mecanum Drive
-//  - Right Stick       - Mecanum Turning
-//  - Left Stick Click  - ??Mode - High Basket
-//  - Right Stick Click - ??Mode - Element
+//  - Right Stick       - Mecanum Rotate
+//  - Left Stick Click  - Drive Speed High/Low
+//  - Right Stick Click - Rotate Speed High/Low
 //
 //  - Dpad Up           - Move Forward (Slow)
 //  - Dpad Down         - Move Back (Slow)
 //  - Dpad Right        - Move Right (Slow)
 //  - Dpad Left         - Move Left (Slow)
 //
-//  - Right Trigger     -
-//  - Right Bumpers     -
+//  - Right Trigger     - Intake Spin In
+//  - Right Bumpers     - Intake Spin Out
 //  - Left Trigger      - Intake Arm Out
 //  - Left Bumpers      - Intake Arm Back
 //
-//  - Y                 - Next Step in Current Mode
-//  - A                 - Previous Step in Current Mode
-//  - X                 -
-//  - B                 -
+//  - Y (▲)             - Next Step in Current Mode
+//  - A (✕)             - Previous Step in Current Mode
+//  - X (■)             -
+//  - B (○)             -
 //
 //----------------------------------------------------------------------
 // Gamepad 2 -----------------------------------------------------------
@@ -55,10 +55,10 @@ import java.util.Arrays;
 //  - Left Trigger      -
 //  - Left Bumpers      -
 
-//  - Y                 - ??Mode - High Basket
-//  - A                 - ??Mode - Element
-//  - X                 -
-//  - B                 -
+//  - Y (▲)             -
+//  - A (✕)             -
+//  - X (■)             -
+//  - B (○)             -
 //----------------------------------------------------------------------
 //endregion
 
@@ -116,7 +116,7 @@ public class TeleOp_Mecanum extends LinearOpMode
             telemetry.addData("Status", "Run Time: " + _runtime.toString());
 
             //------------------------------------------------------------------------------------------
-            //--- Control Methods
+            //--- Drive
             //------------------------------------------------------------------------------------------
             //--- D-pad for directional movement
             DriveUtils.directionDrive(
@@ -124,10 +124,8 @@ public class TeleOp_Mecanum extends LinearOpMode
                     _robot.motorDriveFrontRight,
                     _robot.motorDriveRearLeft,
                     _robot.motorDriveRearRight,
-                    gamepad1,
-                    0.5, // Example speed
-                    telemetry,
-                    _showInfo
+                    gamepad1, telemetry, _showInfo,
+                    0.5 //-- Speed
             );
 
             //--- Joysticks for mecanum movement
@@ -136,16 +134,26 @@ public class TeleOp_Mecanum extends LinearOpMode
                     _robot.motorDriveFrontRight,
                     _robot.motorDriveRearLeft,
                     _robot.motorDriveRearRight,
-                    gamepad1,
-                    telemetry,
-                    _showInfo
+                    gamepad1, telemetry, _showInfo
             );
-            
+
             //------------------------------------------------------------------------------------------
-            //--- Intake Motor
+            //--- Intake
             //------------------------------------------------------------------------------------------
-            Intake.intakeByPower(_robot.motorIntake, gamepad1, telemetry, _showInfo);
-            //Intake.intakeByEncoder(_robot.motorIntake, gamepad1, telemetry, _showInfo);
+            Intake.intakeByPower(
+                    _robot.motorIntake,
+                    _robot.servoIntakeSpinLeft,
+                    _robot.servoIntakeSpinRight,
+                    gamepad1, telemetry, _showInfo
+            );
+
+//            Intake.intakeByEncoder(
+//                    _robot.motorIntake,
+//                    _robot.servoIntakeSpinLeft,
+//                    _robot.servoIntakeSpinRight,
+//                    gamepad1, telemetry, _showInfo
+//            );
+
 
 
             //ArmControl(true);
@@ -154,11 +162,6 @@ public class TeleOp_Mecanum extends LinearOpMode
 //            ArmWristFineTune(true);
 //            ArmElbowFineTune(true);
 //            ArmShoulderFineTune(true);
-
-            //IntakeLiftControl(true);
-            intakeSpinners(true);
-
-
 
 
             //------------------------------------------------------------------------------------------
@@ -180,17 +183,10 @@ public class TeleOp_Mecanum extends LinearOpMode
 //                _robot.motorLiftRight.setPower(0);
 //            }
 
-
-
-//
 //            if (gamepad1.x)
 //            {
 //                MotorUtils.resetEncoder(_robot.motorIntake);
 //            }
-
-            telemetry.addData("motorIntake Power", _robot.motorIntake.getPower());
-            telemetry.addData("motorIntake Position", _robot.motorIntake.getCurrentPosition());
-            telemetry.addData("motorIntake Target", _robot.motorIntake.getTargetPosition());
 
             //------------------------------------------------------------------------------------------
             //--- Update Telemetry Display
@@ -425,47 +421,17 @@ public class TeleOp_Mecanum extends LinearOpMode
     {
         //TODO: Refactor into it's own class -- Intake
 
-        if (gamepad1.y) {
+            //--- Intake Lift In
             _robot.servoIntakeLiftLeftPos = ServoUtils.moveToPosition(_robot.servoIntakeLiftLeft, _robot.SERVO_INTAKE_LIFT_IN);
             _robot.servoIntakeLiftRightPos = ServoUtils.moveToPosition(_robot.servoIntakeLiftRight, _robot.SERVO_INTAKE_LIFT_IN);
-        }
-        if (gamepad1.b) {
+
+            //--- Intake Lift Out and Hold
             _robot.servoIntakeLiftLeftPos = ServoUtils.moveToPosition(_robot.servoIntakeLiftLeft, _robot.SERVO_INTAKE_LIFT_OUT);
             _robot.servoIntakeLiftRightPos = ServoUtils.moveToPosition(_robot.servoIntakeLiftRight, _robot.SERVO_INTAKE_LIFT_OUT);
-        }
-        if (gamepad1.x) {
+
+            //--- Intake Lift Out and Drop
             _robot.servoIntakeLiftLeftPos = ServoUtils.moveToPositionAndDisable(_robot.servoIntakeLiftLeft, _robot.SERVO_INTAKE_LIFT_OUT, 750);
             _robot.servoIntakeLiftRightPos = ServoUtils.moveToPositionAndDisable(_robot.servoIntakeLiftRight, _robot.SERVO_INTAKE_LIFT_OUT, 750);
-        }
-
-        //--- Show messages
-        if (showInfo)
-        {
-            telemetry.addData("Intake Lift Left", "%4.2f", _robot.servoIntakeLiftLeftPos);
-            telemetry.addData("Intake Lift Right", "%4.2f", _robot.servoIntakeLiftRightPos);
-        }
-    }
-
-    private void intakeSpinners(boolean showInfo)
-    {
-        if (gamepad1.y)
-        {
-            //--- Outtake
-            _robot.servoIntakeSpinLeft.setPower(-1);
-            _robot.servoIntakeSpinRight.setPower(1);
-        }
-        if (gamepad1.a)
-        {
-            //--- Intake
-            _robot.servoIntakeSpinLeft.setPower(1);
-            _robot.servoIntakeSpinRight.setPower(-1);
-        }
-        if (gamepad1.b)
-        {
-            //--- Stop
-            _robot.servoIntakeSpinLeft.setPower(0);
-            _robot.servoIntakeSpinRight.setPower(0);
-        }
 
         //--- Show messages
         if (showInfo)
