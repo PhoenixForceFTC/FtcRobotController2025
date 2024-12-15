@@ -126,22 +126,13 @@ public class TeleOp_Mecanum extends LinearOpMode
             //------------------------------------------------------------------------------------------
             //--- Intake
             //------------------------------------------------------------------------------------------
-            _robot.intake.intakeByEncoder();
-            _robot.intake.setSpinnerControls();
-            _robot.intake.setLiftArmControls();
+//            _robot.intake.intakeByEncoder();
+//            _robot.intake.setSpinnerControls();
+//            _robot.intake.setLiftArmControls();
 
             //------------------------------------------------------------------------------------------
             //--- Arm
             //------------------------------------------------------------------------------------------
-
-
-            //------------------------------------------------------------------------------------------
-            //--- Lift
-            //------------------------------------------------------------------------------------------
-            //_robot.lift.liftByPower();
-            //_robot.lift.liftByEncoder();
-
-
             //ArmControl(true);
 
 //            ArmClawFineTune(true);
@@ -149,30 +140,10 @@ public class TeleOp_Mecanum extends LinearOpMode
 //            ArmElbowFineTune(true);
 //            ArmShoulderFineTune(true);
 
-
             //------------------------------------------------------------------------------------------
-            //--- Lift Motors - Drive by Power
+            //--- Lift
             //------------------------------------------------------------------------------------------
-//            if (gamepad1.left_trigger > 0.1) //--- Extend motorIntake when left trigger is pressed
-//            {
-//                _robot.motorLiftLeft.setPower(gamepad1.left_trigger);
-//                _robot.motorLiftRight.setPower(gamepad1.left_trigger);
-//            }
-//            else if (gamepad1.left_bumper) //--- Retract motorIntake when left bumper is pressed
-//            {
-//                _robot.motorLiftLeft.setPower(-1);
-//                _robot.motorLiftRight.setPower(-1);
-//            }
-//            else
-//            {
-//                _robot.motorLiftLeft.setPower(0);
-//                _robot.motorLiftRight.setPower(0);
-//            }
-
-//            if (gamepad1.x)
-//            {
-//                MotorUtils.resetEncoder(_robot.motorIntake);
-//            }
+//            _robot.lift.liftByEncoder();
 
             //------------------------------------------------------------------------------------------
             //--- Update Telemetry Display

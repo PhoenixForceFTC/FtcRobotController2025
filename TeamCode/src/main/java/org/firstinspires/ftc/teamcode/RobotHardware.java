@@ -156,9 +156,11 @@ public class RobotHardware {
 
         motorLiftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLiftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLiftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         motorLiftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLiftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLiftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //------------------------------------------------------------------------------------------
         //--- Servo Config

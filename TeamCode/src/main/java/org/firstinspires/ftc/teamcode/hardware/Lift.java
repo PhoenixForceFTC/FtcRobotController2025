@@ -17,10 +17,10 @@ public class Lift
     private final boolean showInfo;
 
     //--- Constants for Lift Positions
-    private static final int LIFT_MAX_POSITION = 500; // Example maximum encoder position
+    private static final int LIFT_MAX_POSITION = 2000; // Example maximum encoder position
     private static final int LIFT_MIN_POSITION = 0;   // Example minimum encoder position
 
-    //--- Constructor
+    //region --- Constructor
     public Lift(DcMotor motorLiftLeft, DcMotor motorLiftRight, Gamepad gamepad, Telemetry telemetry, boolean showInfo)
     {
         this.motorLiftLeft = motorLiftLeft;
@@ -29,6 +29,7 @@ public class Lift
         this.telemetry = telemetry;
         this.showInfo = showInfo;
     }
+    //endregion
 
     //--- Handles lifting using power
     public void liftByPower()
@@ -64,10 +65,6 @@ public class Lift
     //--- Handles lifting using encoder positions
     public void liftByEncoder()
     {
-        //--- Configure motors for encoder mode
-//        MotorUtils.configureForEncoder(motorLiftLeft);
-//        MotorUtils.configureForEncoder(motorLiftRight);
-
         if (gamepad.y) //--- Extend to maximum position
         {
             MotorUtils.moveToTargetPosition(motorLiftLeft, LIFT_MAX_POSITION, -1.0);
@@ -78,12 +75,6 @@ public class Lift
             MotorUtils.moveToTargetPosition(motorLiftLeft, LIFT_MIN_POSITION, -1.0);
             MotorUtils.moveToTargetPosition(motorLiftRight, LIFT_MIN_POSITION, -1.0);
         }
-//        else
-//        {
-//            //--- Stop motors when no input
-//            MotorUtils.stopMotor(motorLiftLeft);
-//            MotorUtils.stopMotor(motorLiftRight);
-//        }
 
         //--- Show telemetry if enabled
         if (showInfo)
