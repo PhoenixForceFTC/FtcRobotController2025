@@ -61,11 +61,8 @@ public class Intake
 
         liftIn();
 
+        //--- Keep the intake in place by default
         MotorUtils.moveToTargetPosition(motorIntake, 0, 1.0);
-
-        //MotorUtils.setPower(motorIntake,0);
-
-        //MotorUtils.brakeAtTargetPosition(motorIntake, 0, 1.0);
     }
 
     //--- Handles intake motor power based on gamepad input
@@ -90,9 +87,6 @@ public class Intake
         {
             motorIntake.setPower(0); //--- Stop motorIntake when no input
         }
-
-        //--- Call spinner controls
-        setSpinControls();
 
         //--- Show telemetry if enabled
         if (showInfo)
@@ -120,14 +114,17 @@ public class Intake
             MotorUtils.moveToTargetPosition(motorIntake, MOTOR_INTAKE_MIN_POSITION, 1.0);
             spinOff(); //--- Automatically stop spinning
         }
-//        else
-//        {
-//            //--- Stop the motor when no input
-//            MotorUtils.stopMotor(motorIntake);
-//        }
-
-        //--- Call spinner controls
-        setSpinControls();
+        else
+        {
+            //--- Only turn off the motor when not close to robot, this allows for the responsive
+            //---  control for the user moving it in and out -- and also when set to brake at zero
+            //---  power this makes it so the arm is locked into position when close to robot
+            if (motorIntake.getCurrentPosition() > 20)
+            {
+                //--- Stop the motor when no input
+                MotorUtils.stopMotor(motorIntake);
+            }
+        }
 
         //--- Show telemetry if enabled
         if (showInfo)
@@ -145,7 +142,7 @@ public class Intake
     //region --- Spinners ---
 
     //--- Handles spinner controls based on gamepad input
-    private void setSpinControls()
+    public void setSpinnerControls()
     {
         if (gamepad.right_trigger > 0.1)
         {
@@ -187,7 +184,7 @@ public class Intake
 
     //--- Handles lift controls based on gamepad input
 
-    public void setLiftControls()
+    public void setLiftArmControls()
     {
         //--- Toggle lift position on 'x' button press
         if (gamepad.x)
