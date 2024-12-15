@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.hardware.Drive;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
+import org.firstinspires.ftc.teamcode.hardware.Lift;
 import org.firstinspires.ftc.teamcode.utils.DriveUtils;
 //endregion
 
@@ -96,10 +97,6 @@ public class RobotHardware {
     public Servo servoArmShoulder = null;
     public Servo servoArmClaw = null;
 
-    //--- Servo Power
-    public double servoIntakeSpinRightPower = 0.0;
-    public double servoIntakeSpinLeftPower = 0.0;
-
     //--- Servo Position
     public double servoIntakeLiftLeftPos = 0.0;
     public double servoIntakeLiftRightPos = 0.0;
@@ -114,6 +111,7 @@ public class RobotHardware {
     //------------------------------------------------------------------------------------------
     public Intake intake;
     public Drive drive;
+    public Lift lift;
 
     //------------------------------------------------------------------------------------------
     //--- Define a constructor that allows the OpMode to pass a reference to itself
@@ -186,7 +184,7 @@ public class RobotHardware {
                 servoIntakeLiftRight,
                 myOpMode.gamepad1,
                 myOpMode.telemetry,
-                _showInfo //--- Default to show telemetry
+                _showInfo
         );
 
         drive = new Drive(
@@ -196,7 +194,15 @@ public class RobotHardware {
                 motorDriveRearRight,
                 myOpMode.gamepad1,
                 myOpMode.telemetry,
-                _showInfo //--- Default to show telemetry
+                _showInfo
+        );
+
+        lift = new Lift(
+                motorLiftLeft,
+                motorLiftRight,
+                myOpMode.gamepad1,
+                myOpMode.telemetry,
+                _showInfo
         );
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");

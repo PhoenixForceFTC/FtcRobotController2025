@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+//region --- Imports ---
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.DriveUtils;
+import org.firstinspires.ftc.teamcode.utils.MotorUtils;
+//endregion
 
 public class Drive
 {
@@ -28,7 +31,7 @@ public class Drive
     private final Telemetry telemetry;
     private final boolean showInfo;
 
-    //--- Constructor
+    //region --- Constructor ---
     public Drive(DcMotor frontLeft, DcMotor frontRight, DcMotor rearLeft, DcMotor rearRight,
                  Gamepad gamepad, Telemetry telemetry, boolean showInfo)
     {
@@ -40,6 +43,7 @@ public class Drive
         this.telemetry = telemetry;
         this.showInfo = showInfo;
     }
+    //endregion
 
     //--- Arcade Drive with Speed Control
     public void arcadeDriveSpeedControl()
@@ -93,39 +97,43 @@ public class Drive
         }
     }
 
+    //region --- Move Directions ---
+
     //--- Moves the robot forward
     private void moveForward(double speed)
     {
-        frontLeft.setPower(speed);
-        frontRight.setPower(speed);
-        rearLeft.setPower(speed);
-        rearRight.setPower(speed);
+        MotorUtils.setPower(frontLeft, speed);
+        MotorUtils.setPower(frontRight, speed);
+        MotorUtils.setPower(rearLeft, speed);
+        MotorUtils.setPower(rearRight, speed);
     }
 
     //--- Moves the robot backward
     private void moveBackward(double speed)
     {
-        frontLeft.setPower(-speed);
-        frontRight.setPower(-speed);
-        rearLeft.setPower(-speed);
-        rearRight.setPower(-speed);
+        MotorUtils.setPower(frontLeft, -speed);
+        MotorUtils.setPower(frontRight, -speed);
+        MotorUtils.setPower(rearLeft, -speed);
+        MotorUtils.setPower(rearRight, -speed);
     }
 
     //--- Moves the robot to the left
     private void moveLeft(double speed)
     {
-        frontLeft.setPower(-speed);
-        frontRight.setPower(speed);
-        rearLeft.setPower(speed);
-        rearRight.setPower(-speed);
+        MotorUtils.setPower(frontLeft, -speed);
+        MotorUtils.setPower(frontRight, speed);
+        MotorUtils.setPower(rearLeft, speed);
+        MotorUtils.setPower(rearRight, -speed);
     }
 
     //--- Moves the robot to the right
     private void moveRight(double speed)
     {
-        frontLeft.setPower(speed);
-        frontRight.setPower(-speed);
-        rearLeft.setPower(-speed);
-        rearRight.setPower(speed);
+        MotorUtils.setPower(frontLeft, speed);
+        MotorUtils.setPower(frontRight, -speed);
+        MotorUtils.setPower(rearLeft, -speed);
+        MotorUtils.setPower(rearRight, speed);
     }
+
+    //endregion
 }

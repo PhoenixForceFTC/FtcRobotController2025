@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+//region --- Imports ---
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+//endregion
 
 public class DriveUtils
 {
@@ -50,41 +52,5 @@ public class DriveUtils
             telemetry.addData("Motor -> Front Left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Motor -> Back Left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
         }
-    }
-
-    //--- Moves the robot forward at a specified speed
-    public static void moveForward(DcMotor frontLeft, DcMotor frontRight, DcMotor rearLeft, DcMotor rearRight, double speed)
-    {
-        frontLeft.setPower(speed);
-        frontRight.setPower(speed);
-        rearLeft.setPower(speed);
-        rearRight.setPower(speed);
-    }
-
-    //--- Moves the robot backward at a specified speed
-    public static void moveBackward(DcMotor frontLeft, DcMotor frontRight, DcMotor rearLeft, DcMotor rearRight, double speed)
-    {
-        frontLeft.setPower(-speed);
-        frontRight.setPower(-speed);
-        rearLeft.setPower(-speed);
-        rearRight.setPower(-speed);
-    }
-
-    //--- Moves the robot to the left (strafe) at a specified speed
-    public static void moveLeft(DcMotor frontLeft, DcMotor frontRight, DcMotor rearLeft, DcMotor rearRight, double speed)
-    {
-        frontLeft.setPower(-speed);
-        frontRight.setPower(speed);
-        rearLeft.setPower(speed);
-        rearRight.setPower(-speed);
-    }
-
-    //--- Moves the robot to the right (strafe) at a specified speed
-    public static void moveRight(DcMotor frontLeft, DcMotor frontRight, DcMotor rearLeft, DcMotor rearRight, double speed)
-    {
-        frontLeft.setPower(speed);
-        frontRight.setPower(-speed);
-        rearLeft.setPower(-speed);
-        rearRight.setPower(speed);
     }
 }

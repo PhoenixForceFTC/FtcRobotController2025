@@ -32,16 +32,12 @@ public class Intake
     private final Telemetry telemetry;
     private final boolean showInfo;
 
-    //--- Constructor
+    //region --- Constructor ---
     public Intake(
             DcMotor motorIntake,
-            CRServo servoIntakeSpinLeft,
-            CRServo servoIntakeSpinRight,
-            Servo servoIntakeLiftLeft,
-            Servo servoIntakeLiftRight,
-            Gamepad gamepad,
-            Telemetry telemetry,
-            boolean showInfo
+            CRServo servoIntakeSpinLeft, CRServo servoIntakeSpinRight,
+            Servo servoIntakeLiftLeft, Servo servoIntakeLiftRight,
+            Gamepad gamepad, Telemetry telemetry, boolean showInfo
     )
     {
         this.motorIntake = motorIntake;
@@ -53,10 +49,14 @@ public class Intake
         this.telemetry = telemetry;
         this.showInfo = showInfo;
     }
+    //endregion
 
     //--- Handles intake motor power based on gamepad input
     public void intakeByPower()
     {
+        //--- Configure motors
+        MotorUtils.configureForPower(motorIntake);
+
         //--- Handle extension and retraction with lift state checks
         if (gamepad.left_trigger > 0.1)
         {
@@ -95,6 +95,9 @@ public class Intake
     //--- Handles intake motor movement based on encoder positions
     public void intakeByEncoder()
     {
+        //--- Reset and configure motors
+        MotorUtils.configureForEncoder(motorIntake);
+
         //--- Handle extension and retraction with lift state checks
         if (gamepad.left_trigger > 0.1)
         {
@@ -131,6 +134,8 @@ public class Intake
             telemetry.addData("Intake -> Lift Right", "%4.2f", servoIntakeLiftRight.getPosition());
         }
     }
+
+    //region --- Spinners ---
 
     //--- Handles spinner controls based on gamepad input
     private void setSpinControls()
@@ -169,6 +174,39 @@ public class Intake
         spinState = "OFF"; //--- Update spin state
     }
 
+    //endregion
+
+    //region --- Lift ---
+
+    //--- Test Method for Manually Controlling Intake Lift
+    public void testLiftControl()
+    {
+        //--- Gamepad Button Assignments
+        if (gamepad.y) //--- Y Button: Set to Lift In
+        {
+            liftIn();
+            if (showInfo) telemetry.addData("Lift -> Action", "IN");
+        }
+        else if (gamepad.b) //--- B Button: Set to Lift Hold
+        {
+            liftHold();
+            if (showInfo) telemetry.addData("Lift -> Action", "HOLD");
+        }
+        else if (gamepad.a) //--- A Button: Set to Lift Drop
+        {
+            liftDrop();
+            if (showInfo) telemetry.addData("Lift -> Action", "DROP");
+        }
+
+        //--- Show Telemetry for Lift State
+        if (showInfo)
+        {
+            telemetry.addData("Lift -> Left Servo Position", "%4.2f", servoIntakeLiftLeft.getPosition());
+            telemetry.addData("Lift -> Right Servo Position", "%4.2f", servoIntakeLiftRight.getPosition());
+            telemetry.addData("Lift -> Current State", liftState);
+        }
+    }
+
     //--- Moves the intake lift to the in position
     public void liftIn()
     {
@@ -192,4 +230,6 @@ public class Intake
         ServoUtils.moveToPositionAndDisable(servoIntakeLiftRight, SERVO_INTAKE_LIFT_OUT, 750);
         liftState = "DROP";
     }
+
+    //endregion
 }

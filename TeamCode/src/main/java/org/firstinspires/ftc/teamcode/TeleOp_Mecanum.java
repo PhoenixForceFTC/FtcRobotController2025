@@ -127,6 +127,8 @@ public class TeleOp_Mecanum extends LinearOpMode
             _robot.intake.intakeByPower();
 //            _robot.intake.intakeByEncoder();
 
+            //_robot.intake.testLiftControl();
+
             //------------------------------------------------------------------------------------------
             //--- Arm
             //------------------------------------------------------------------------------------------
