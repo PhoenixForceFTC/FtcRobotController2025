@@ -4,10 +4,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.hardware.Drive;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
+import org.firstinspires.ftc.teamcode.utils.DriveUtils;
 //endregion
 
 //region --- Control Hub Config ---
@@ -53,6 +54,11 @@ I2C
 //endregion
 
 public class RobotHardware {
+
+    //------------------------------------------------------------------------------------------
+    //--- Settings
+    //------------------------------------------------------------------------------------------
+    boolean _showInfo = true;
 
     //------------------------------------------------------------------------------------------
     //--- OpMode
@@ -107,6 +113,7 @@ public class RobotHardware {
     //--- Custom Hardware Classes
     //------------------------------------------------------------------------------------------
     public Intake intake;
+    public Drive drive;
 
     //------------------------------------------------------------------------------------------
     //--- Define a constructor that allows the OpMode to pass a reference to itself
@@ -169,7 +176,7 @@ public class RobotHardware {
         //servoArmWrist.setDirection(Servo.Direction.REVERSE);
 
         //------------------------------------------------------------------------------------------
-        //--- Intake Subsystem
+        //--- Hardware
         //------------------------------------------------------------------------------------------
         intake = new Intake(
                 motorIntake,
@@ -179,7 +186,17 @@ public class RobotHardware {
                 servoIntakeLiftRight,
                 myOpMode.gamepad1,
                 myOpMode.telemetry,
-                true //--- Default to show telemetry
+                _showInfo //--- Default to show telemetry
+        );
+
+        drive = new Drive(
+                motorDriveFrontLeft,
+                motorDriveFrontRight,
+                motorDriveRearLeft,
+                motorDriveRearRight,
+                myOpMode.gamepad1,
+                myOpMode.telemetry,
+                _showInfo //--- Default to show telemetry
         );
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");

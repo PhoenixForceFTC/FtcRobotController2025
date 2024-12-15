@@ -118,24 +118,8 @@ public class TeleOp_Mecanum extends LinearOpMode
             //------------------------------------------------------------------------------------------
             //--- Drive
             //------------------------------------------------------------------------------------------
-            //--- D-pad for directional movement
-            DriveUtils.directionDrive(
-                    _robot.motorDriveFrontLeft,
-                    _robot.motorDriveFrontRight,
-                    _robot.motorDriveRearLeft,
-                    _robot.motorDriveRearRight,
-                    gamepad1, telemetry, _showInfo,
-                    0.5 //-- Speed
-            );
-
-            //--- Joysticks for mecanum movement
-            DriveUtils.arcadeDriveSpeedControl(
-                    _robot.motorDriveFrontLeft,
-                    _robot.motorDriveFrontRight,
-                    _robot.motorDriveRearLeft,
-                    _robot.motorDriveRearRight,
-                    gamepad1, telemetry, _showInfo
-            );
+            _robot.drive.directionDrive(0.5);  //--- D-pad for directional movement
+            _robot.drive.arcadeDriveSpeedControl();  //--- Joysticks for mecanum movement
 
             //------------------------------------------------------------------------------------------
             //--- Intake
@@ -143,8 +127,14 @@ public class TeleOp_Mecanum extends LinearOpMode
             _robot.intake.intakeByPower();
 //            _robot.intake.intakeByEncoder();
 
+            //------------------------------------------------------------------------------------------
+            //--- Arm
+            //------------------------------------------------------------------------------------------
 
 
+            //------------------------------------------------------------------------------------------
+            //--- Lift
+            //------------------------------------------------------------------------------------------
 
 
             //ArmControl(true);
