@@ -10,90 +10,94 @@ import org.firstinspires.ftc.teamcode.utils.MotorUtils;
 
 public class Drive
 {
+    //region --- Constants ---
     //--- Constants for Speed Multipliers
     private static final double SPEED_FAST = 1.0;
     private static final double SPEED_SLOW = 0.5;
     private static final double SPEED_ROTATE_FAST = 0.8;
     private static final double SPEED_ROTATE_SLOW = 0.4;
+    //endregion
 
-    //--- State Variables
-    private boolean isSpeedFast = true; //--- Default movement speed mode
-    private boolean isRotateFast = false; //--- Default rotation speed mode
-    private boolean wasLeftStickButtonPressed = false;
-    private boolean wasRightStickButtonPressed = false;
+    //region --- Variables ---
+    private boolean _isSpeedFast = true; //--- Default movement speed mode
+    private boolean _isRotateFast = false; //--- Default rotation speed mode
+    private boolean _wasLeftStickButtonPressed = false;
+    private boolean _wasRightStickButtonPressed = false;
+    //endregion
 
-    //--- Robot Components
-    private final DcMotor frontLeft;
-    private final DcMotor frontRight;
-    private final DcMotor rearLeft;
-    private final DcMotor rearRight;
-    private final Gamepad gamepad;
-    private final Telemetry telemetry;
-    private final boolean showInfo;
+    //region --- Hardware ---
+    private final DcMotor _frontLeft;
+    private final DcMotor _frontRight;
+    private final DcMotor _rearLeft;
+    private final DcMotor _rearRight;
+    private final Gamepad _gamepad;
+    private final Telemetry _telemetry;
+    private final boolean _showInfo;
+    //endregion
 
     //region --- Constructor ---
     public Drive(DcMotor frontLeft, DcMotor frontRight, DcMotor rearLeft, DcMotor rearRight,
                  Gamepad gamepad, Telemetry telemetry, boolean showInfo)
     {
-        this.frontLeft = frontLeft;
-        this.frontRight = frontRight;
-        this.rearLeft = rearLeft;
-        this.rearRight = rearRight;
-        this.gamepad = gamepad;
-        this.telemetry = telemetry;
-        this.showInfo = showInfo;
+        _frontLeft = frontLeft;
+        _frontRight = frontRight;
+        _rearLeft = rearLeft;
+        _rearRight = rearRight;
+        _gamepad = gamepad;
+        _telemetry = telemetry;
+        _showInfo = showInfo;
     }
     //endregion
 
     //--- Arcade Drive with Speed Control
     public void arcadeDriveSpeedControl()
     {
-        if (gamepad.left_stick_button && !wasLeftStickButtonPressed)
+        if (_gamepad.left_stick_button && !_wasLeftStickButtonPressed)
         {
-            isSpeedFast = !isSpeedFast; //--- Toggle movement speed
+            _isSpeedFast = !_isSpeedFast; //--- Toggle movement speed
         }
-        wasLeftStickButtonPressed = gamepad.left_stick_button;
+        _wasLeftStickButtonPressed = _gamepad.left_stick_button;
 
-        if (gamepad.right_stick_button && !wasRightStickButtonPressed)
+        if (_gamepad.right_stick_button && !_wasRightStickButtonPressed)
         {
-            isRotateFast = !isRotateFast; //--- Toggle rotation speed
+            _isRotateFast = !_isRotateFast; //--- Toggle rotation speed
         }
-        wasRightStickButtonPressed = gamepad.right_stick_button;
+        _wasRightStickButtonPressed = _gamepad.right_stick_button;
 
-        double speedMultiplier = isSpeedFast ? SPEED_FAST : SPEED_SLOW;
-        double speedMultiplierRotate = isRotateFast ? SPEED_ROTATE_FAST : SPEED_ROTATE_SLOW;
+        double speedMultiplier = _isSpeedFast ? SPEED_FAST : SPEED_SLOW;
+        double speedMultiplierRotate = _isRotateFast ? SPEED_ROTATE_FAST : SPEED_ROTATE_SLOW;
 
-        DriveUtils.arcadeDrive(frontLeft, frontRight, rearLeft, rearRight, gamepad, telemetry, showInfo, speedMultiplier, speedMultiplierRotate);
+        DriveUtils.arcadeDrive(_frontLeft, _frontRight, _rearLeft, _rearRight, _gamepad, _telemetry, _showInfo, speedMultiplier, speedMultiplierRotate);
 
-        if (showInfo)
+        if (_showInfo)
         {
-            telemetry.addData("Drive -> Speed Mode", isSpeedFast ? "FAST" : "SLOW");
-            telemetry.addData("Drive -> Rotate Mode", isRotateFast ? "FAST" : "SLOW");
+            _telemetry.addData("Drive -> Speed Mode", _isSpeedFast ? "FAST" : "SLOW");
+            _telemetry.addData("Drive -> Rotate Mode", _isRotateFast ? "FAST" : "SLOW");
         }
     }
 
     //--- Directional Driving with D-Pad
     public void directionDrive(double speed)
     {
-        if (gamepad.dpad_up)
+        if (_gamepad.dpad_up)
         {
             moveForward(speed);
-            if (showInfo) telemetry.addData("Drive -> Direction", "FORWARD (%4.2f)", speed);
+            if (_showInfo) _telemetry.addData("Drive -> Direction", "FORWARD (%4.2f)", speed);
         }
-        else if (gamepad.dpad_down)
+        else if (_gamepad.dpad_down)
         {
             moveBackward(speed);
-            if (showInfo) telemetry.addData("Drive -> Direction", "BACKWARD (%4.2f)", speed);
+            if (_showInfo) _telemetry.addData("Drive -> Direction", "BACKWARD (%4.2f)", speed);
         }
-        else if (gamepad.dpad_left)
+        else if (_gamepad.dpad_left)
         {
             moveLeft(speed);
-            if (showInfo) telemetry.addData("Drive -> Direction", "LEFT (%4.2f)", speed);
+            if (_showInfo) _telemetry.addData("Drive -> Direction", "LEFT (%4.2f)", speed);
         }
-        else if (gamepad.dpad_right)
+        else if (_gamepad.dpad_right)
         {
             moveRight(speed);
-            if (showInfo) telemetry.addData("Drive -> Direction", "RIGHT (%4.2f)", speed);
+            if (_showInfo) _telemetry.addData("Drive -> Direction", "RIGHT (%4.2f)", speed);
         }
     }
 
@@ -102,37 +106,37 @@ public class Drive
     //--- Moves the robot forward
     private void moveForward(double speed)
     {
-        MotorUtils.setPower(frontLeft, speed);
-        MotorUtils.setPower(frontRight, speed);
-        MotorUtils.setPower(rearLeft, speed);
-        MotorUtils.setPower(rearRight, speed);
+        MotorUtils.setPower(_frontLeft, speed);
+        MotorUtils.setPower(_frontRight, speed);
+        MotorUtils.setPower(_rearLeft, speed);
+        MotorUtils.setPower(_rearRight, speed);
     }
 
     //--- Moves the robot backward
     private void moveBackward(double speed)
     {
-        MotorUtils.setPower(frontLeft, -speed);
-        MotorUtils.setPower(frontRight, -speed);
-        MotorUtils.setPower(rearLeft, -speed);
-        MotorUtils.setPower(rearRight, -speed);
+        MotorUtils.setPower(_frontLeft, -speed);
+        MotorUtils.setPower(_frontRight, -speed);
+        MotorUtils.setPower(_rearLeft, -speed);
+        MotorUtils.setPower(_rearRight, -speed);
     }
 
     //--- Moves the robot to the left
     private void moveLeft(double speed)
     {
-        MotorUtils.setPower(frontLeft, -speed);
-        MotorUtils.setPower(frontRight, speed);
-        MotorUtils.setPower(rearLeft, speed);
-        MotorUtils.setPower(rearRight, -speed);
+        MotorUtils.setPower(_frontLeft, -speed);
+        MotorUtils.setPower(_frontRight, speed);
+        MotorUtils.setPower(_rearLeft, speed);
+        MotorUtils.setPower(_rearRight, -speed);
     }
 
     //--- Moves the robot to the right
     private void moveRight(double speed)
     {
-        MotorUtils.setPower(frontLeft, speed);
-        MotorUtils.setPower(frontRight, -speed);
-        MotorUtils.setPower(rearLeft, -speed);
-        MotorUtils.setPower(rearRight, speed);
+        MotorUtils.setPower(_frontLeft, speed);
+        MotorUtils.setPower(_frontRight, -speed);
+        MotorUtils.setPower(_rearLeft, -speed);
+        MotorUtils.setPower(_rearRight, speed);
     }
 
     //endregion

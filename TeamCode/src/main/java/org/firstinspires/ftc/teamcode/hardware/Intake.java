@@ -12,28 +12,29 @@ import org.firstinspires.ftc.teamcode.utils.ServoUtils;
 
 public class Intake
 {
-    //--- Constants for motorIntake positions
+    //region --- Constants ---
     private static final int MOTOR_INTAKE_MAX_POSITION = 150; //--- Maximum position (fully extended)
     private static final int MOTOR_INTAKE_MIN_POSITION = -30; //--- Minimum position (fully retracted)
     private static final double SERVO_INTAKE_LIFT_IN = 0.85;  //--- Lift in position
     private static final double SERVO_INTAKE_LIFT_OUT = 0.43; //--- Lift out position
+    //endregion
 
-    //--- State variables
-    public String spinState = "OFF";  //--- Tracks spinner state
-    public String liftState = "IN";  //--- Tracks lift state
-    private boolean isLiftIn = true;
+    //region --- Variables ---
+    public String _spinState = "OFF";  //--- Tracks spinner state
+    public String _liftState = "IN";  //--- Tracks lift state
+    private boolean _isLiftIn = true;
+    //endregion
 
-    //--- Hardware components
-    private final DcMotor motorIntake;
-    private final CRServo servoIntakeSpinLeft;
-    private final CRServo servoIntakeSpinRight;
-    private final Servo servoIntakeLiftLeft;
-    private final Servo servoIntakeLiftRight;
-
-    //--- Gamepad and Telemetry
-    private final Gamepad gamepad;
-    private final Telemetry telemetry;
-    private final boolean showInfo;
+    //region --- Hardware ---
+    private final DcMotor _motorIntake;
+    private final CRServo _servoIntakeSpinLeft;
+    private final CRServo _servoIntakeSpinRight;
+    private final Servo _servoIntakeLiftLeft;
+    private final Servo _servoIntakeLiftRight;
+    private final Gamepad _gamepad;
+    private final Telemetry _telemetry;
+    private final boolean _showInfo;
+    //endregion
 
     //region --- Constructor ---
     public Intake(
@@ -43,60 +44,60 @@ public class Intake
             Gamepad gamepad, Telemetry telemetry, boolean showInfo
     )
     {
-        this.motorIntake = motorIntake;
-        this.servoIntakeSpinLeft = servoIntakeSpinLeft;
-        this.servoIntakeSpinRight = servoIntakeSpinRight;
-        this.servoIntakeLiftLeft = servoIntakeLiftLeft;
-        this.servoIntakeLiftRight = servoIntakeLiftRight;
-        this.gamepad = gamepad;
-        this.telemetry = telemetry;
-        this.showInfo = showInfo;
+        this._motorIntake = motorIntake;
+        this._servoIntakeSpinLeft = servoIntakeSpinLeft;
+        this._servoIntakeSpinRight = servoIntakeSpinRight;
+        this._servoIntakeLiftLeft = servoIntakeLiftLeft;
+        this._servoIntakeLiftRight = servoIntakeLiftRight;
+        this._gamepad = gamepad;
+        this._telemetry = telemetry;
+        this._showInfo = showInfo;
     }
     //endregion
 
     public void initialize()
     {
-        liftState = "IN";
-        spinState = "OFF";
+        _liftState = "IN";
+        _spinState = "OFF";
 
         liftIn();
 
         //--- Keep the intake in place by default
-        MotorUtils.moveToTargetPosition(motorIntake, 0, 1.0);
+        MotorUtils.moveToTargetPosition(_motorIntake, 0, 1.0);
     }
 
     //--- Handles intake motor power based on gamepad input
     public void intakeByPower()
     {
         //--- Configure motors
-        MotorUtils.configureForPower(motorIntake);
+        MotorUtils.configureForPower(_motorIntake);
 
         //--- Handle extension and retraction with lift state checks
-        if (gamepad.left_trigger > 0.1)
+        if (_gamepad.left_trigger > 0.1)
         {
             spinIn(); //--- Automatically spin in
-            motorIntake.setPower(gamepad.left_trigger); //--- Scale power by trigger pressure
+            _motorIntake.setPower(_gamepad.left_trigger); //--- Scale power by trigger pressure
 
         }
-        else if (gamepad.left_bumper)
+        else if (_gamepad.left_bumper)
         {
             spinOff(); //--- Automatically stop spinning
-            motorIntake.setPower(-1); //--- Full power in reverse
+            _motorIntake.setPower(-1); //--- Full power in reverse
         }
         else
         {
-            motorIntake.setPower(0); //--- Stop motorIntake when no input
+            _motorIntake.setPower(0); //--- Stop motorIntake when no input
         }
 
         //--- Show telemetry if enabled
-        if (showInfo)
+        if (_showInfo)
         {
-            telemetry.addData("Intake -> Motor Power", "%4.2f", motorIntake.getPower());
-            telemetry.addData("Intake -> Current Position", motorIntake.getCurrentPosition());
-            telemetry.addData("Intake -> Spinner", spinState);
-            telemetry.addData("Intake -> Lift State", liftState);
-            telemetry.addData("Intake -> Lift Left", "%4.2f", servoIntakeLiftLeft.getPosition());
-            telemetry.addData("Intake -> Lift Right", "%4.2f", servoIntakeLiftRight.getPosition());
+            _telemetry.addData("Intake -> Motor Power", "%4.2f", _motorIntake.getPower());
+            _telemetry.addData("Intake -> Current Position", _motorIntake.getCurrentPosition());
+            _telemetry.addData("Intake -> Spinner", _spinState);
+            _telemetry.addData("Intake -> Lift State", _liftState);
+            _telemetry.addData("Intake -> Lift Left", "%4.2f", _servoIntakeLiftLeft.getPosition());
+            _telemetry.addData("Intake -> Lift Right", "%4.2f", _servoIntakeLiftRight.getPosition());
         }
     }
 
@@ -104,14 +105,14 @@ public class Intake
     public void intakeByEncoder()
     {
         //--- Handle extension and retraction with lift state checks
-        if (gamepad.left_trigger > 0.1)
+        if (_gamepad.left_trigger > 0.1)
         {
-            MotorUtils.moveToTargetPosition(motorIntake, MOTOR_INTAKE_MAX_POSITION, 1.0);
+            MotorUtils.moveToTargetPosition(_motorIntake, MOTOR_INTAKE_MAX_POSITION, 1.0);
             spinIn(); //--- Automatically spin in
         }
-        else if (gamepad.left_bumper)
+        else if (_gamepad.left_bumper)
         {
-            MotorUtils.moveToTargetPosition(motorIntake, MOTOR_INTAKE_MIN_POSITION, 1.0);
+            MotorUtils.moveToTargetPosition(_motorIntake, MOTOR_INTAKE_MIN_POSITION, 1.0);
             spinOff(); //--- Automatically stop spinning
         }
         else
@@ -119,23 +120,23 @@ public class Intake
             //--- Only turn off the motor when not close to robot, this allows for the responsive
             //---  control for the user moving it in and out -- and also when set to brake at zero
             //---  power this makes it so the arm is locked into position when close to robot
-            if (motorIntake.getCurrentPosition() > 20)
+            if (_motorIntake.getCurrentPosition() > 20)
             {
                 //--- Stop the motor when no input
-                MotorUtils.stopMotor(motorIntake);
+                MotorUtils.stopMotor(_motorIntake);
             }
         }
 
         //--- Show telemetry if enabled
-        if (showInfo)
+        if (_showInfo)
         {
-            telemetry.addData("Intake -> Motor Power", "%4.2f", motorIntake.getPower());
-            telemetry.addData("Intake -> Target Position", motorIntake.getTargetPosition());
-            telemetry.addData("Intake -> Current Position", motorIntake.getCurrentPosition());
-            telemetry.addData("Intake -> Spinner", spinState);
-            telemetry.addData("Intake -> Lift State", liftState);
-            telemetry.addData("Intake -> Lift Left", "%4.2f", servoIntakeLiftLeft.getPosition());
-            telemetry.addData("Intake -> Lift Right", "%4.2f", servoIntakeLiftRight.getPosition());
+            _telemetry.addData("Intake -> Motor Power", "%4.2f", _motorIntake.getPower());
+            _telemetry.addData("Intake -> Target Position", _motorIntake.getTargetPosition());
+            _telemetry.addData("Intake -> Current Position", _motorIntake.getCurrentPosition());
+            _telemetry.addData("Intake -> Spinner", _spinState);
+            _telemetry.addData("Intake -> Lift State", _liftState);
+            _telemetry.addData("Intake -> Lift Left", "%4.2f", _servoIntakeLiftLeft.getPosition());
+            _telemetry.addData("Intake -> Lift Right", "%4.2f", _servoIntakeLiftRight.getPosition());
         }
     }
 
@@ -144,11 +145,11 @@ public class Intake
     //--- Handles spinner controls based on gamepad input
     public void setSpinnerControls()
     {
-        if (gamepad.right_trigger > 0.1)
+        if (_gamepad.right_trigger > 0.1)
         {
             spinIn();
         }
-        else if (gamepad.right_bumper)
+        else if (_gamepad.right_bumper)
         {
             spinOut();
         }
@@ -157,25 +158,25 @@ public class Intake
     //--- Method to spin intake inwards
     public void spinIn()
     {
-        servoIntakeSpinLeft.setPower(1);  //--- Spin left servo forward
-        servoIntakeSpinRight.setPower(-1); //--- Spin right servo backward
-        spinState = "IN"; //--- Update spin state
+        _servoIntakeSpinLeft.setPower(1);  //--- Spin left servo forward
+        _servoIntakeSpinRight.setPower(-1); //--- Spin right servo backward
+        _spinState = "IN"; //--- Update spin state
     }
 
     //--- Method to spin intake outwards
     public void spinOut()
     {
-        servoIntakeSpinLeft.setPower(-1); //--- Spin left servo backward
-        servoIntakeSpinRight.setPower(1); //--- Spin right servo forward
-        spinState = "OUT"; //--- Update spin state
+        _servoIntakeSpinLeft.setPower(-1); //--- Spin left servo backward
+        _servoIntakeSpinRight.setPower(1); //--- Spin right servo forward
+        _spinState = "OUT"; //--- Update spin state
     }
 
     //--- Method to stop the intake spinner
     public void spinOff()
     {
-        servoIntakeSpinLeft.setPower(0); //--- Stop left servo
-        servoIntakeSpinRight.setPower(0); //--- Stop right servo
-        spinState = "OFF"; //--- Update spin state
+        _servoIntakeSpinLeft.setPower(0); //--- Stop left servo
+        _servoIntakeSpinRight.setPower(0); //--- Stop right servo
+        _spinState = "OFF"; //--- Update spin state
     }
 
     //endregion
@@ -187,9 +188,9 @@ public class Intake
     public void setLiftArmControls()
     {
         //--- Toggle lift position on 'x' button press
-        if (gamepad.x)
+        if (_gamepad.x)
         {
-            if (isLiftIn)
+            if (_isLiftIn)
             {
                 liftDrop(); //--- Drop intake
             }
@@ -199,7 +200,7 @@ public class Intake
             }
 
             //--- Toggle the state
-            isLiftIn = !isLiftIn;
+            _isLiftIn = !_isLiftIn;
 
             //--- Add a small delay to prevent repeated toggling due to button hold
             try
@@ -213,25 +214,25 @@ public class Intake
     //--- Moves the intake lift to the in position
     public void liftIn()
     {
-        servoIntakeLiftLeft.setPosition(SERVO_INTAKE_LIFT_IN);
-        servoIntakeLiftRight.setPosition(SERVO_INTAKE_LIFT_IN);
-        liftState = "IN";
+        _servoIntakeLiftLeft.setPosition(SERVO_INTAKE_LIFT_IN);
+        _servoIntakeLiftRight.setPosition(SERVO_INTAKE_LIFT_IN);
+        _liftState = "IN";
     }
 
     //--- Moves the intake lift to the out position and holds
     public void liftHold()
     {
-        servoIntakeLiftLeft.setPosition(SERVO_INTAKE_LIFT_OUT);
-        servoIntakeLiftRight.setPosition(SERVO_INTAKE_LIFT_OUT);
-        liftState = "HOLD";
+        _servoIntakeLiftLeft.setPosition(SERVO_INTAKE_LIFT_OUT);
+        _servoIntakeLiftRight.setPosition(SERVO_INTAKE_LIFT_OUT);
+        _liftState = "HOLD";
     }
 
     //--- Moves the intake lift to the out position and drops
     public void liftDrop()
     {
-        ServoUtils.moveToPositionAndDisable(servoIntakeLiftLeft, SERVO_INTAKE_LIFT_OUT, 750);
-        ServoUtils.moveToPositionAndDisable(servoIntakeLiftRight, SERVO_INTAKE_LIFT_OUT, 750);
-        liftState = "DROP";
+        ServoUtils.moveToPositionAndDisable(_servoIntakeLiftLeft, SERVO_INTAKE_LIFT_OUT, 750);
+        ServoUtils.moveToPositionAndDisable(_servoIntakeLiftRight, SERVO_INTAKE_LIFT_OUT, 750);
+        _liftState = "DROP";
     }
 
     //endregion
