@@ -24,11 +24,7 @@ public class ServoUtils
             {
                 servo.setPosition(clampPosition(position));
                 //--- Wait for the servo to reach the desired position
-                Thread.sleep(delayMs); //--- Adjust based on servo speed
-            }
-            catch (InterruptedException e)
-            {
-                Thread.currentThread().interrupt(); //--- Restore interrupted status
+                sleep(delayMs); //--- Adjust based on servo speed
             }
             finally
             {
@@ -50,5 +46,15 @@ public class ServoUtils
 
     private static double clampPosition(double position) {
         return Math.max(0.0, Math.min(1.0, position));
+    }
+
+
+    //--- TODO: Move to util class
+    public static void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

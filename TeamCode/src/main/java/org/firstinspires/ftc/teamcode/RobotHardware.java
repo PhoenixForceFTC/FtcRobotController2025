@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.hardware.Arm;
 import org.firstinspires.ftc.teamcode.hardware.Drive;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.hardware.Lift;
@@ -112,6 +113,7 @@ public class RobotHardware {
     public Intake intake;
     public Drive drive;
     public Lift lift;
+    public Arm arm;
 
     //------------------------------------------------------------------------------------------
     //--- Define a constructor that allows the OpMode to pass a reference to itself
@@ -209,6 +211,17 @@ public class RobotHardware {
                 motorLiftLeft,
                 motorLiftRight,
                 myOpMode.gamepad1,
+                myOpMode.telemetry,
+                _showInfo
+        );
+
+        arm = new Arm(
+                servoArmClaw,
+                servoArmWrist,
+                servoArmElbow,
+                servoArmShoulder,
+                myOpMode.gamepad1,
+                myOpMode.gamepad2,
                 myOpMode.telemetry,
                 _showInfo
         );
