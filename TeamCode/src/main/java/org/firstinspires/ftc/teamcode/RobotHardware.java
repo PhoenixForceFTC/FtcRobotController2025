@@ -116,7 +116,8 @@ public class RobotHardware {
     //------------------------------------------------------------------------------------------
     //--- Define a constructor that allows the OpMode to pass a reference to itself
     //------------------------------------------------------------------------------------------
-    public RobotHardware(LinearOpMode opmode) {
+    public RobotHardware(LinearOpMode opmode)
+    {
         myOpMode = opmode;
     }
 
@@ -124,7 +125,8 @@ public class RobotHardware {
      * Initialize all the robot's hardware.
      * This method must be called ONCE when the OpMode is initialized.
      */
-    public void init()    {
+    public void init()
+    {
         //------------------------------------------------------------------------------------------
         //--- Motor Config
         //------------------------------------------------------------------------------------------
@@ -145,8 +147,12 @@ public class RobotHardware {
         motorLiftLeft = myOpMode.hardwareMap.get(DcMotor.class, "upl"); //--- Lifting Arm Left
         motorLiftRight = myOpMode.hardwareMap.get(DcMotor.class, "upr"); //--- Lifting Arm Right
 
+        motorLiftLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorLiftRight.setDirection(DcMotor.Direction.REVERSE);
+
         motorIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorIntake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         motorLiftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLiftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

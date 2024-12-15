@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -17,8 +19,9 @@ public class Intake
     private static final double SERVO_INTAKE_LIFT_OUT = 0.43; //--- Lift out position
 
     //--- State variables
-    private static String spinState = "OFF";  //--- Tracks spinner state
-    private static String liftState = "IN";  //--- Tracks lift state
+    public String spinState = "OFF";  //--- Tracks spinner state
+    public String liftState = "IN";  //--- Tracks lift state
+    private boolean isLiftIn = true;
 
     //--- Hardware components
     private final DcMotor motorIntake;
@@ -51,6 +54,20 @@ public class Intake
     }
     //endregion
 
+    public void initialize()
+    {
+        liftState = "IN";
+        spinState = "OFF";
+
+        liftIn();
+
+        MotorUtils.moveToTargetPosition(motorIntake, 0, 1.0);
+
+        //MotorUtils.setPower(motorIntake,0);
+
+        //MotorUtils.brakeAtTargetPosition(motorIntake, 0, 1.0);
+    }
+
     //--- Handles intake motor power based on gamepad input
     public void intakeByPower()
     {
@@ -60,17 +77,14 @@ public class Intake
         //--- Handle extension and retraction with lift state checks
         if (gamepad.left_trigger > 0.1)
         {
-            motorIntake.setPower(gamepad.left_trigger); //--- Scale power by trigger pressure
             spinIn(); //--- Automatically spin in
-            if (liftState.equals("IN"))
-            {
-                liftDrop(); //--- Automatically drop lift
-            }
+            motorIntake.setPower(gamepad.left_trigger); //--- Scale power by trigger pressure
+
         }
         else if (gamepad.left_bumper)
         {
-            motorIntake.setPower(-1); //--- Full power in reverse
             spinOff(); //--- Automatically stop spinning
+            motorIntake.setPower(-1); //--- Full power in reverse
         }
         else
         {
@@ -95,29 +109,22 @@ public class Intake
     //--- Handles intake motor movement based on encoder positions
     public void intakeByEncoder()
     {
-        //--- Reset and configure motors
-        MotorUtils.configureForEncoder(motorIntake);
-
         //--- Handle extension and retraction with lift state checks
         if (gamepad.left_trigger > 0.1)
         {
-            MotorUtils.setTargetPosition(motorIntake, MOTOR_INTAKE_MAX_POSITION, 1.0);
+            MotorUtils.moveToTargetPosition(motorIntake, MOTOR_INTAKE_MAX_POSITION, 1.0);
             spinIn(); //--- Automatically spin in
-            if (liftState.equals("IN"))
-            {
-                liftDrop(); //--- Automatically drop lift
-            }
         }
         else if (gamepad.left_bumper)
         {
-            MotorUtils.setTargetPosition(motorIntake, MOTOR_INTAKE_MIN_POSITION, 1.0);
+            MotorUtils.moveToTargetPosition(motorIntake, MOTOR_INTAKE_MIN_POSITION, 1.0);
             spinOff(); //--- Automatically stop spinning
         }
-        else
-        {
-            //--- Stop the motor when no input
-            MotorUtils.stopMotor(motorIntake);
-        }
+//        else
+//        {
+//            //--- Stop the motor when no input
+//            MotorUtils.stopMotor(motorIntake);
+//        }
 
         //--- Call spinner controls
         setSpinControls();
@@ -178,32 +185,31 @@ public class Intake
 
     //region --- Lift ---
 
-    //--- Test Method for Manually Controlling Intake Lift
-    public void testLiftControl()
-    {
-        //--- Gamepad Button Assignments
-        if (gamepad.y) //--- Y Button: Set to Lift In
-        {
-            liftIn();
-            if (showInfo) telemetry.addData("Lift -> Action", "IN");
-        }
-        else if (gamepad.b) //--- B Button: Set to Lift Hold
-        {
-            liftHold();
-            if (showInfo) telemetry.addData("Lift -> Action", "HOLD");
-        }
-        else if (gamepad.a) //--- A Button: Set to Lift Drop
-        {
-            liftDrop();
-            if (showInfo) telemetry.addData("Lift -> Action", "DROP");
-        }
+    //--- Handles lift controls based on gamepad input
 
-        //--- Show Telemetry for Lift State
-        if (showInfo)
+    public void setLiftControls()
+    {
+        //--- Toggle lift position on 'x' button press
+        if (gamepad.x)
         {
-            telemetry.addData("Lift -> Left Servo Position", "%4.2f", servoIntakeLiftLeft.getPosition());
-            telemetry.addData("Lift -> Right Servo Position", "%4.2f", servoIntakeLiftRight.getPosition());
-            telemetry.addData("Lift -> Current State", liftState);
+            if (isLiftIn)
+            {
+                liftDrop(); //--- Drop intake
+            }
+            else
+            {
+                liftIn(); //--- Retract intake into robot
+            }
+
+            //--- Toggle the state
+            isLiftIn = !isLiftIn;
+
+            //--- Add a small delay to prevent repeated toggling due to button hold
+            try
+            {
+                Thread.sleep(250); // Adjust the delay as needed
+            }
+            catch (InterruptedException e) { }
         }
     }
 

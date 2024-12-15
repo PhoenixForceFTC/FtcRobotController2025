@@ -65,25 +65,25 @@ public class Lift
     public void liftByEncoder()
     {
         //--- Configure motors for encoder mode
-        MotorUtils.configureForEncoder(motorLiftLeft);
-        MotorUtils.configureForEncoder(motorLiftRight);
+//        MotorUtils.configureForEncoder(motorLiftLeft);
+//        MotorUtils.configureForEncoder(motorLiftRight);
 
-        if (gamepad.left_trigger > 0.1) //--- Extend to maximum position
+        if (gamepad.y) //--- Extend to maximum position
         {
-            MotorUtils.setTargetPosition(motorLiftLeft, LIFT_MAX_POSITION, gamepad.left_trigger);
-            MotorUtils.setTargetPosition(motorLiftRight, LIFT_MAX_POSITION, gamepad.left_trigger);
+            MotorUtils.moveToTargetPosition(motorLiftLeft, LIFT_MAX_POSITION, -1.0);
+            MotorUtils.moveToTargetPosition(motorLiftRight, LIFT_MAX_POSITION, -1.0);
         }
-        else if (gamepad.left_bumper) //--- Retract to minimum position
+        else if (gamepad.a) //--- Retract to minimum position
         {
-            MotorUtils.setTargetPosition(motorLiftLeft, LIFT_MIN_POSITION, -1.0); // Full reverse
-            MotorUtils.setTargetPosition(motorLiftRight, LIFT_MIN_POSITION, -1.0);
+            MotorUtils.moveToTargetPosition(motorLiftLeft, LIFT_MIN_POSITION, -1.0);
+            MotorUtils.moveToTargetPosition(motorLiftRight, LIFT_MIN_POSITION, -1.0);
         }
-        else
-        {
-            //--- Stop motors when no input
-            MotorUtils.stopMotor(motorLiftLeft);
-            MotorUtils.stopMotor(motorLiftRight);
-        }
+//        else
+//        {
+//            //--- Stop motors when no input
+//            MotorUtils.stopMotor(motorLiftLeft);
+//            MotorUtils.stopMotor(motorLiftRight);
+//        }
 
         //--- Show telemetry if enabled
         if (showInfo)

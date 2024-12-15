@@ -5,9 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.hardware.Intake;
-import org.firstinspires.ftc.teamcode.utils.DriveUtils;
-import org.firstinspires.ftc.teamcode.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.utils.ServoUtils;
 import org.firstinspires.ftc.teamcode.utils.StateMachine;
 
@@ -35,8 +32,8 @@ import java.util.Arrays;
 //
 //  - Y (▲)             - Next Step in Current Mode
 //  - A (✕)             - Previous Step in Current Mode
-//  - X (■)             -
-//  - B (○)             -
+//  - X (■)             - Intake In
+//  - B (○)             - Intake Out
 //
 //----------------------------------------------------------------------
 // Gamepad 2 -----------------------------------------------------------
@@ -106,6 +103,11 @@ public class TeleOp_Mecanum extends LinearOpMode
         _runtime.reset();
 
         //------------------------------------------------------------------------------------------
+        //--- Initialize
+        //------------------------------------------------------------------------------------------
+        _robot.intake.initialize();
+
+        //------------------------------------------------------------------------------------------
         //--- Run until the end of the match (driver presses STOP)
         //------------------------------------------------------------------------------------------
         while (opModeIsActive()) {
@@ -124,8 +126,9 @@ public class TeleOp_Mecanum extends LinearOpMode
             //------------------------------------------------------------------------------------------
             //--- Intake
             //------------------------------------------------------------------------------------------
-            _robot.intake.intakeByPower();
-//            _robot.intake.intakeByEncoder();
+            _robot.intake.setLiftControls();
+            //_robot.intake.intakeByPower();
+            _robot.intake.intakeByEncoder();
 
             //_robot.intake.testLiftControl();
 
@@ -137,6 +140,8 @@ public class TeleOp_Mecanum extends LinearOpMode
             //------------------------------------------------------------------------------------------
             //--- Lift
             //------------------------------------------------------------------------------------------
+            //_robot.lift.liftByPower();
+            //_robot.lift.liftByEncoder();
 
 
             //ArmControl(true);

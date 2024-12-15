@@ -7,11 +7,39 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class MotorUtils
 {
     //--- Sets a motor to run to a specific target position with specified power
-    public static void setTargetPosition(DcMotor motor, int targetPosition, double power)
+    public static void moveToTargetPosition(DcMotor motor, int targetPosition, double power)
     {
         motor.setTargetPosition(targetPosition);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor.setPower(power);
+    }
+
+    //--- Moves the motor to a target position and sets it to brake/hold the position
+    public static void brakeAtTargetPosition(DcMotor motor, int targetPosition, double power)
+    {
+        motor.setTargetPosition(targetPosition);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setPower(power);
+
+        //--- Wait until the motor reaches the target position
+        while (motor.isBusy())
+        {
+//            //--- Optionally add a small delay to prevent hogging the CPU
+//            try
+//            {
+//                Thread.sleep(10);
+//            }
+//            catch (InterruptedException e)
+//            {
+//                //--- Handle exception if necessary
+//            }
+        }
+
+        //--- Set motor mode to BRAKE to hold position
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //--- Set power to zero to stop actively driving the motor
+        motor.setPower(0);
     }
 
     //--- Sets power for a motor without changing mode
