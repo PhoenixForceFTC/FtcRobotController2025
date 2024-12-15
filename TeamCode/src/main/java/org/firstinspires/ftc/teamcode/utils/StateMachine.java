@@ -8,12 +8,13 @@ public class StateMachine<T>
 {
     private List<T> _steps;
     private int _currentStepIndex;
+    private boolean _hasStarted;
 
     //region --- Constructor ---
     //--- Constructor to initialize steps and starting index
     public StateMachine(List<T> steps)
     {
-        this(steps, 0); // Default to starting at index 0
+        this(steps, 0); //--- Default to starting at index 0
     }
 
     //--- Constructor with initial index
@@ -21,6 +22,7 @@ public class StateMachine<T>
     {
         _steps = steps;
         _currentStepIndex = (initialIndex >= 0 && initialIndex < steps.size()) ? initialIndex : 0;
+        _hasStarted = false;
     }
     //endregion
 
@@ -28,6 +30,11 @@ public class StateMachine<T>
     //--- Move to the next step
     public T next()
     {
+        if (!_hasStarted)
+        {
+            _hasStarted = true; //--- Mark as started
+            return getCurrentStep(); //--- Stay on the first step
+        }
         if (_currentStepIndex < _steps.size() - 1)
         {
             _currentStepIndex++;
@@ -49,6 +56,7 @@ public class StateMachine<T>
     public void reset()
     {
         _currentStepIndex = 0;
+        _hasStarted = false; //--- Reset the start flag
     }
 
     //--- Reset to a specific step index

@@ -213,7 +213,8 @@ public class RobotHardware {
                 myOpMode.gamepad1,
                 myOpMode.gamepad2,
                 myOpMode.telemetry,
-                _showInfo
+                _showInfo,
+                lift
         );
 
         //------------------------------------------------------------------------------------------

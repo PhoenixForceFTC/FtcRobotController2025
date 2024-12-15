@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.hardware.Arm;
 //endregion
 
 //region --- Controls ---
@@ -46,10 +48,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //  - Left Trigger      -
 //  - Left Bumpers      -
 
-//  - Y (▲)             - ??Mode -> High Basket
-//  - A (✕)             - ??Mode -> Specimens
-//  - X (■)             -
-//  - B (○)             - ??Mode -> Climbing
+//  - Y (▲)             - Mode -> High Basket
+//  - A (✕)             - Mode -> Low Basket
+//  - X (■)             - Mode -> Climbing
+//  - B (○)             - Mode -> Specimens
 //----------------------------------------------------------------------
 //endregion
 
@@ -85,7 +87,6 @@ public class TeleOp_Mecanum extends LinearOpMode
         //--- Hardware Initialize
         //------------------------------------------------------------------------------------------
         _robot.intake.initialize();
-        _robot.arm.initialize();
 
         //------------------------------------------------------------------------------------------
         //--- Run until the end of the match (driver presses STOP)
@@ -103,23 +104,25 @@ public class TeleOp_Mecanum extends LinearOpMode
             _robot.drive.directionDrive(0.5);  //--- D-pad for directional movement
             _robot.drive.arcadeDriveSpeedControl();  //--- Joysticks for mecanum movement
 
-            //------------------------------------------------------------------------------------------
-            //--- Intake
-            //------------------------------------------------------------------------------------------
-//            _robot.intake.intakeByEncoder();
-//            _robot.intake.setSpinnerControls();
-//            _robot.intake.setLiftArmControls();
+            boolean fineTuneArm = false;
+            if (fineTuneArm)
+            {
+                _robot.arm.fineTuneArm();
+            }
+            else
+            {
+                //------------------------------------------------------------------------------------------
+                //--- Intake
+                //------------------------------------------------------------------------------------------
+                _robot.intake.intakeByEncoder();
+                _robot.intake.setSpinnerControls();
+                _robot.intake.setLiftArmControls();
 
-            //------------------------------------------------------------------------------------------
-            //--- Arm
-            //------------------------------------------------------------------------------------------
-            _robot.arm.controlArm();
-//            _robot.arm.fineTuneArm();
-
-            //------------------------------------------------------------------------------------------
-            //--- Lift
-            //------------------------------------------------------------------------------------------
-//            _robot.lift.liftByEncoder();
+                //------------------------------------------------------------------------------------------
+                //--- Arm
+                //------------------------------------------------------------------------------------------
+                _robot.arm.controlArm();
+            }
 
             //------------------------------------------------------------------------------------------
             //--- Update Telemetry Display

@@ -108,4 +108,10 @@ public class Lift
         MotorUtils.moveToTargetPosition(_motorLiftLeft, LIFT_BOTTOM_POSITION, -1.0);
         MotorUtils.moveToTargetPosition(_motorLiftRight, LIFT_BOTTOM_POSITION, -1.0);
     }
+
+    //--- Get the current position of the lift motors
+    public int getCurrentLiftPosition()
+    {
+        return MotorUtils.getCurrentPosition(_motorLiftLeft);
+    }
 }

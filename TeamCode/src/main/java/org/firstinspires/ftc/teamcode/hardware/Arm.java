@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode.hardware;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.utils.ServoUtils;
 import org.firstinspires.ftc.teamcode.utils.StateMachine;
 
@@ -32,14 +31,70 @@ public class Arm {
     private static final double SHOULDER_MIDDLE = 0.59;
     private static final double SHOULDER_FULL_BACK = 0.40;
     private static final double SHOULDER_HOOKED = 0.50;
+    //endregion
 
-    private static final int LIFT_LOW = 0;
-    private static final int LIFT_HIGH = 2000;
+    //region --- State Machine Steps ---
+    private void stepsForSpecimens() {
+        _currentStates = Arrays.asList(
+                //--- Arm is grabbing specimens from wall
+                new ArmState(CLAW_OPEN,   WRIST_INTAKE,   ELBOW_MIDDLE,  SHOULDER_MIDDLE,    LiftAction.BOTTOM),
+                //--- Grab specimen
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE,   ELBOW_MIDDLE,  SHOULDER_MIDDLE,    LiftAction.BOTTOM),
+                //--- Arm moves up
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE,   ELBOW_GRABBED, SHOULDER_MIDDLE,    LiftAction.BOTTOM),
+                //--- Arm is ready to hook on the bar
+                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_UP,      SHOULDER_FULL_BACK, LiftAction.BOTTOM),
+                //--- Specimen is hooked
+                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_HOOKED,  SHOULDER_HOOKED,    LiftAction.BOTTOM)
+        );
+        updateStateMachines(_currentStates);
+    }
+
+    private void stepsForHighBasket()
+    {
+        // Add more as needed
+        _currentStates = Arrays.asList(
+                //--- Arm is positioned for the intake
+                new ArmState(CLAW_OPEN,   WRIST_INTAKE,   ELBOW_INTAKE, SHOULDER_INTAKE,   LiftAction.BOTTOM),
+                //--- Grab the block from intake
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE,   ELBOW_INTAKE, SHOULDER_INTAKE,   LiftAction.BOTTOM),
+                //--- (more steps)
+                //--- Position to drop in basket
+                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_UP,    SHOULDER_FULL_BACK, LiftAction.HIGH_BASKET)
+                //--- (more steps)
+        );
+        updateStateMachines(_currentStates);
+    }
+
+    private void stepsForLowBasket() {
+
+        _currentStates = Arrays.asList(
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE,   ELBOW_INTAKE, SHOULDER_INTAKE,    LiftAction.BOTTOM),
+                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_UP,     SHOULDER_FULL_BACK, LiftAction.LOW_BASKET)
+                //TODO - add more
+        );
+        updateStateMachines(_currentStates);
+    }
+
+    private void stepsForClimbing() {
+
+        //TODO: Move the intake arm into robot
+
+        _currentStates = Arrays.asList(
+                //TODO - haven't started
+                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_GRABBED, SHOULDER_HOOKED, LiftAction.BOTTOM),
+                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_GRABBED, SHOULDER_HOOKED, LiftAction.BOTTOM)
+        );
+        updateStateMachines(_currentStates);
+    }
     //endregion
 
     //region --- Enums ---
     public enum Mode {
-        HIGH_BASKET, SPECIMENS, CLIMBING
+        HIGH_BASKET,
+        SPECIMENS,
+        CLIMBING,
+        LOW_BASKET
     }
     //endregion
 
@@ -52,6 +107,7 @@ public class Arm {
     private final Gamepad _gamepad2;
     private final Telemetry _telemetry;
     private final boolean _showInfo;
+    private final Lift _robotLift;
 
     private StateMachine<Double> _clawStateMachine;
     private StateMachine<Double> _wristStateMachine;
@@ -63,7 +119,6 @@ public class Arm {
     private double _servoWristPos = 0.0;
     private double _servoElbowPos = 0.0;
     private double _servoShoulderPos = 0.0;
-    private int _motorLiftPos = 0;
 
     private Mode _currentMode = Mode.SPECIMENS; //--- Default mode
     private List<ArmState> _currentStates;
@@ -71,7 +126,7 @@ public class Arm {
 
     //region --- Constructor ---
     public Arm(Servo servoClaw, Servo servoWrist, Servo servoElbow, Servo servoShoulder,
-               Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry, boolean showInfo)
+               Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry, boolean showInfo, Lift robotLift)
     {
         this._servoClaw = servoClaw;
         this._servoWrist = servoWrist;
@@ -81,66 +136,34 @@ public class Arm {
         this._gamepad2 = gamepad2;
         this._telemetry = telemetry;
         this._showInfo = showInfo;
+        this._robotLift = robotLift; // Initialize the Lift reference
 
-        switchMode(Mode.SPECIMENS);
-    }
-    //endregion
-
-    //region --- Initialize State Machines ---
-    private void stepsForSpecimens()
-    {
-        List<ArmState> specimensStates = Arrays.asList(
-                new ArmState(CLAW_OPEN,   WRIST_INTAKE,   ELBOW_MIDDLE,  SHOULDER_MIDDLE,    LIFT_LOW),
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE,   ELBOW_MIDDLE,  SHOULDER_MIDDLE,    LIFT_LOW),
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE,   ELBOW_GRABBED, SHOULDER_MIDDLE,    LIFT_HIGH),
-                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_UP,      SHOULDER_FULL_BACK, LIFT_LOW),
-                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_HOOKED,  SHOULDER_HOOKED,    LIFT_LOW)
-        );
-        _currentStates = specimensStates;
-        updateStateMachines(_currentStates);
-    }
-
-    private void stepsForHighBasket()
-    {
-        List<ArmState> highBasketStates = Arrays.asList(
-                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_UP, SHOULDER_FULL_BACK, LIFT_LOW)
-                // Add more as needed
-        );
-        _currentStates = highBasketStates;
-        updateStateMachines(_currentStates);
-    }
-
-    private void stepsForClimbing() {
-        List<ArmState> climbingStates = Arrays.asList(
-                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_GRABBED, SHOULDER_HOOKED, LIFT_LOW)
-                // Add more as needed
-        );
-        _currentStates = climbingStates;
-        updateStateMachines(_currentStates);
-    }
-
-    private void updateStateMachines(List<ArmState> states)
-    {
-        _clawStateMachine = new StateMachine<>(extractValues(states, ArmState::getClaw));
-        _wristStateMachine = new StateMachine<>(extractValues(states, ArmState::getWrist));
-        _elbowStateMachine = new StateMachine<>(extractValues(states, ArmState::getElbow));
-        _shoulderStateMachine = new StateMachine<>(extractValues(states, ArmState::getShoulder));
-        _liftStateMachine = new StateMachine<>(extractValues(states, ArmState::getLift));
+        initializeStatesForMode(_currentMode);
     }
     //endregion
 
     //region --- Arm Control ---
     public void controlArm()
     {
+        if (!areStateMachinesInitialized())
+        {
+            _telemetry.addData("Error", "State machines are not initialized");
+            return;
+        }
+
         if (_gamepad2.y)
         {
             switchMode(Mode.HIGH_BASKET);
         }
         else if (_gamepad2.a)
         {
-            switchMode(Mode.SPECIMENS);
+            switchMode(Mode.LOW_BASKET);
         }
         else if (_gamepad2.b)
+        {
+            switchMode(Mode.SPECIMENS);
+        }
+        else if (_gamepad2.x)
         {
             switchMode(Mode.CLIMBING);
         }
@@ -164,8 +187,24 @@ public class Arm {
             _telemetry.addData("Arm -> Wrist Pos", "%4.2f", _servoWristPos);
             _telemetry.addData("Arm -> Elbow Pos", "%4.2f", _servoElbowPos);
             _telemetry.addData("Arm -> Shoulder Pos", "%4.2f", _servoShoulderPos);
-            _telemetry.addData("Lift -> Lift Pos", _motorLiftPos);
+            _telemetry.addData("Lift -> Lift Pos", _robotLift.getCurrentLiftPosition());
         }
+    }
+
+    private void updateStateMachines(List<ArmState> states) {
+        _clawStateMachine = new StateMachine<>(extractValues(states, ArmState::getClaw));
+        _wristStateMachine = new StateMachine<>(extractValues(states, ArmState::getWrist));
+        _elbowStateMachine = new StateMachine<>(extractValues(states, ArmState::getElbow));
+        _shoulderStateMachine = new StateMachine<>(extractValues(states, ArmState::getShoulder));
+    }
+
+    private boolean areStateMachinesInitialized()
+    {
+        return _clawStateMachine != null &&
+                _wristStateMachine != null &&
+                _elbowStateMachine != null &&
+                _shoulderStateMachine != null &&
+                _currentStates != null;
     }
 
     private void switchMode(Mode newMode)
@@ -191,38 +230,79 @@ public class Arm {
         {
             stepsForClimbing();
         }
+        else if (mode == Mode.LOW_BASKET)
+        {
+            stepsForLowBasket();
+        }
+        else
+        {
+            throw new IllegalArgumentException("Unknown Mode: " + mode);
+        }
+
+        //--- Reset all state machines to the first step
+        if (_clawStateMachine != null) _clawStateMachine.reset();
+        if (_wristStateMachine != null) _wristStateMachine.reset();
+        if (_elbowStateMachine != null) _elbowStateMachine.reset();
+        if (_shoulderStateMachine != null) _shoulderStateMachine.reset();
     }
 
-    private void moveToNextState()
-    {
+    private void moveToNextState() {
+        //--- Move servos to the next positions
         _servoClawPos = ServoUtils.moveToPosition(_servoClaw, _clawStateMachine.next());
         _servoWristPos = ServoUtils.moveToPosition(_servoWrist, _wristStateMachine.next());
         _servoElbowPos = ServoUtils.moveToPosition(_servoElbow, _elbowStateMachine.next());
         _servoShoulderPos = ServoUtils.moveToPosition(_servoShoulder, _shoulderStateMachine.next());
-        //_motorLiftPos =  MotorUtils.moveToTargetPosition();
+
+        //--- Execute the lift action for the current state
+        _currentStates.get(_clawStateMachine.getCurrentStepIndex()).executeLiftAction(_robotLift);
     }
 
-    private void moveToPreviousState()
-    {
+    private void moveToPreviousState() {
+        //--- Move servos to the previous positions
         _servoClawPos = ServoUtils.moveToPosition(_servoClaw, _clawStateMachine.previous());
         _servoWristPos = ServoUtils.moveToPosition(_servoWrist, _wristStateMachine.previous());
         _servoElbowPos = ServoUtils.moveToPosition(_servoElbow, _elbowStateMachine.previous());
         _servoShoulderPos = ServoUtils.moveToPosition(_servoShoulder, _shoulderStateMachine.previous());
-        //_motorLiftPos = MotorUtils.moveToTargetPosition();
+
+        //--- Execute the lift action for the current state
+        _currentStates.get(_clawStateMachine.getCurrentStepIndex()).executeLiftAction(_robotLift);
+    }
+
+    public enum LiftAction {
+        HIGH_BASKET {
+            @Override
+            public void execute(Lift lift) {
+                lift.moveToHighBasket();
+            }
+        },
+        LOW_BASKET {
+            @Override
+            public void execute(Lift lift) {
+                lift.moveToLowBasket();
+            }
+        },
+        BOTTOM {
+            @Override
+            public void execute(Lift lift) {
+                lift.moveToBottom();
+            }
+        };
+
+        public abstract void execute(Lift lift);
     }
     //endregion
 
-    //region --- Helper Class ---
+    //region --- ArmState Class ---
     private static class ArmState {
         private final double claw, wrist, elbow, shoulder;
-        private final int lift;
+        private final LiftAction liftAction;
 
-        public ArmState(double claw, double wrist, double elbow, double shoulder, int lift) {
+        public ArmState(double claw, double wrist, double elbow, double shoulder, LiftAction liftAction) {
             this.claw = claw;
             this.wrist = wrist;
             this.elbow = elbow;
             this.shoulder = shoulder;
-            this.lift = lift;
+            this.liftAction = liftAction;
         }
 
         public double getClaw() {
@@ -241,8 +321,10 @@ public class Arm {
             return shoulder;
         }
 
-        public int getLift() {
-            return lift;
+        public void executeLiftAction(Lift lift) {
+            if (liftAction != null) {
+                liftAction.execute(lift);
+            }
         }
     }
     //endregion
@@ -399,77 +481,3 @@ public class Arm {
     //endregion
 }
 
-//    public void initialize()
-//    {
-//        //--- Constants
-//        double clawOpenPos = 0.61;
-//        double clawClosedPos = 0.76;
-//
-//        double wristIntake = 0.69;
-//        double wristDelivery = 0.03;
-//
-//        double elbowIntake = 0.31;
-//        double elbowGrabbed = 0.38;
-//        double elbowMiddle = 0.43;
-//        double elbowUp = 0.13; //???
-//        double elbowHooked = 0.05;
-//
-//        double shoulderIntake = 0.75;
-//        double shoulderMiddle = 0.59;
-//        double shoulderFullBack = 0.40;
-//        double shoulderHooked = 0.5;
-//
-//
-//        //--- Position 0 -- arm is grabbing specimens
-//        double claw1 = clawOpenPos;
-//        double wrist1 = wristIntake;
-//        double elbow1 = elbowMiddle;
-//        double shoulder1 = shoulderMiddle;
-//        int lift1 = 0;
-//
-//        //--- Position 1 --- arm grabs specimens
-//        double claw2 = clawClosedPos;
-//        double wrist2 = wristIntake;
-//        double elbow2 = elbowMiddle;
-//        double shoulder2 = shoulderMiddle;
-//        int lift2 = 0;
-//
-//        //--- Position 2 --- arm moves up
-//        double claw3 = clawClosedPos;
-//        double wrist3 = wristIntake;
-//        double elbow3 = elbowGrabbed;
-//        double shoulder3 = shoulderMiddle;
-//        int lift3 = 2000;
-//
-//        /*
-//        //--- Position 3 -- arm is positioned for the intake
-//        double claw4 = clawOpenPos;
-//        double wrist4 = wristIntake;
-//        double elbow4 = elbowIntake;
-//        double shoulder4 = shoulderIntake;
-//         */
-//
-//        //--- Position 3 -- arm is ready to deliver
-//        double claw4 = clawClosedPos;
-//        double wrist4 = wristDelivery;
-//        double elbow4 = elbowUp;
-//        double shoulder4 = shoulderFullBack;
-//        int lift4 = 0;
-//
-//        //--- Position 4 --- specimen is hooked
-//        double claw5 = clawClosedPos;
-//        double wrist5 = wristDelivery;
-//        double elbow5 = elbowHooked;
-//        double shoulder5 = shoulderHooked;
-//        int lift5 = 0;
-//
-//        //--- State machine for each servo
-//        _clawStateMachine = new StateMachine<>(new ArrayList<>(Arrays.asList(claw1, claw2, claw3, claw4, claw5)));
-//        _wristStateMachine = new StateMachine<>(new ArrayList<>(Arrays.asList(wrist1, wrist2, wrist3, wrist4, wrist5)));
-//        _elbowStateMachine = new StateMachine<>(new ArrayList<>(Arrays.asList(elbow1, elbow2, elbow3, elbow4, elbow5)));
-//        _shoulderStateMachine = new StateMachine<>(new ArrayList<>(Arrays.asList(shoulder1, shoulder2, shoulder3, shoulder4, shoulder5)));
-//        _liftStateMachine = new StateMachine<>(new ArrayList<>(Arrays.asList(lift1, lift2, lift3, lift4, lift5)));
-//
-//        //--- Goes to first state when initialized
-//        moveToPreviousState();
-//    }
