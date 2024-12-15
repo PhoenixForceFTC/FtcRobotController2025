@@ -192,10 +192,10 @@ public class Arm {
     }
 
     private void updateStateMachines(List<ArmState> states) {
-        _clawStateMachine = new StateMachine<>(extractValues(states, ArmState::getClaw));
-        _wristStateMachine = new StateMachine<>(extractValues(states, ArmState::getWrist));
-        _elbowStateMachine = new StateMachine<>(extractValues(states, ArmState::getElbow));
-        _shoulderStateMachine = new StateMachine<>(extractValues(states, ArmState::getShoulder));
+        _clawStateMachine = new StateMachine<>(extractValues(states, ArmState::get_claw));
+        _wristStateMachine = new StateMachine<>(extractValues(states, ArmState::get_wrist));
+        _elbowStateMachine = new StateMachine<>(extractValues(states, ArmState::get_elbow));
+        _shoulderStateMachine = new StateMachine<>(extractValues(states, ArmState::get_shoulder));
     }
 
     private boolean areStateMachinesInitialized()
@@ -294,36 +294,36 @@ public class Arm {
 
     //region --- ArmState Class ---
     private static class ArmState {
-        private final double claw, wrist, elbow, shoulder;
-        private final LiftAction liftAction;
+        private final double _claw, _wrist, _elbow, _shoulder;
+        private final LiftAction _liftAction;
 
         public ArmState(double claw, double wrist, double elbow, double shoulder, LiftAction liftAction) {
-            this.claw = claw;
-            this.wrist = wrist;
-            this.elbow = elbow;
-            this.shoulder = shoulder;
-            this.liftAction = liftAction;
+            _claw = claw;
+            _wrist = wrist;
+            _elbow = elbow;
+            _shoulder = shoulder;
+            _liftAction = liftAction;
         }
 
-        public double getClaw() {
-            return claw;
+        public double get_claw() {
+            return _claw;
         }
 
-        public double getWrist() {
-            return wrist;
+        public double get_wrist() {
+            return _wrist;
         }
 
-        public double getElbow() {
-            return elbow;
+        public double get_elbow() {
+            return _elbow;
         }
 
-        public double getShoulder() {
-            return shoulder;
+        public double get_shoulder() {
+            return _shoulder;
         }
 
         public void executeLiftAction(Lift lift) {
-            if (liftAction != null) {
-                liftAction.execute(lift);
+            if (_liftAction != null) {
+                _liftAction.execute(lift);
             }
         }
     }
