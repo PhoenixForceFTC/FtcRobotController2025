@@ -10,8 +10,9 @@ import org.firstinspires.ftc.teamcode.utils.MotorUtils;
 public class Lift
 {
     //region --- Constants ---
-    private static final int LIFT_MAX_POSITION = 2000; // Example maximum encoder position
-    private static final int LIFT_MIN_POSITION = 0;   // Example minimum encoder position
+    private static final int LIFT_TOP_BASKET_POSITION = 2000;
+    private static final int LIFT_LOW_BASKET_POSITION = 1000;
+    private static final int LIFT_BOTTOM_POSITION = 0;
     //endregion
 
     //region --- Hardware ---
@@ -67,15 +68,17 @@ public class Lift
     //--- Handles lifting using encoder positions
     public void liftByEncoder()
     {
-        if (_gamepad.y) //--- Extend to maximum position
+        if (_gamepad.y)
         {
-            MotorUtils.moveToTargetPosition(_motorLiftLeft, LIFT_MAX_POSITION, -1.0);
-            MotorUtils.moveToTargetPosition(_motorLiftRight, LIFT_MAX_POSITION, -1.0);
+            moveToHighBasket();
         }
-        else if (_gamepad.a) //--- Retract to minimum position
+        else if (_gamepad.b)
         {
-            MotorUtils.moveToTargetPosition(_motorLiftLeft, LIFT_MIN_POSITION, -1.0);
-            MotorUtils.moveToTargetPosition(_motorLiftRight, LIFT_MIN_POSITION, -1.0);
+            moveToLowBasket();
+        }
+        else if (_gamepad.a)
+        {
+            moveToBottom();
         }
 
         //--- Show telemetry if enabled
@@ -86,5 +89,23 @@ public class Lift
             _telemetry.addData("Lift -> Current Position Left", MotorUtils.getCurrentPosition(_motorLiftLeft));
             _telemetry.addData("Lift -> Current Position Right", MotorUtils.getCurrentPosition(_motorLiftRight));
         }
+    }
+
+    public void moveToHighBasket()
+    {
+        MotorUtils.moveToTargetPosition(_motorLiftLeft, LIFT_TOP_BASKET_POSITION, -1.0);
+        MotorUtils.moveToTargetPosition(_motorLiftRight, LIFT_TOP_BASKET_POSITION, -1.0);
+    }
+
+    public void moveToLowBasket()
+    {
+        MotorUtils.moveToTargetPosition(_motorLiftLeft, LIFT_LOW_BASKET_POSITION, -1.0);
+        MotorUtils.moveToTargetPosition(_motorLiftRight, LIFT_LOW_BASKET_POSITION, -1.0);
+    }
+
+    public void moveToBottom()
+    {
+        MotorUtils.moveToTargetPosition(_motorLiftLeft, LIFT_BOTTOM_POSITION, -1.0);
+        MotorUtils.moveToTargetPosition(_motorLiftRight, LIFT_BOTTOM_POSITION, -1.0);
     }
 }

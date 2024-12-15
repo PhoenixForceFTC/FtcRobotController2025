@@ -4,12 +4,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.utils.ServoUtils;
-import org.firstinspires.ftc.teamcode.utils.StateMachine;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 //endregion
 
 //region --- Controls ---
@@ -52,10 +46,10 @@ import java.util.Arrays;
 //  - Left Trigger      -
 //  - Left Bumpers      -
 
-//  - Y (▲)             -
-//  - A (✕)             -
+//  - Y (▲)             - ??Mode -> High Basket
+//  - A (✕)             - ??Mode -> Specimens
 //  - X (■)             -
-//  - B (○)             -
+//  - B (○)             - ??Mode -> Climbing
 //----------------------------------------------------------------------
 //endregion
 
@@ -120,7 +114,7 @@ public class TeleOp_Mecanum extends LinearOpMode
             //--- Arm
             //------------------------------------------------------------------------------------------
             _robot.arm.controlArm();
-            //_robot.arm.fineTuneArm();
+//            _robot.arm.fineTuneArm();
 
             //------------------------------------------------------------------------------------------
             //--- Lift

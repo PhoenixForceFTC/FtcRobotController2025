@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.hardware.Arm;
 import org.firstinspires.ftc.teamcode.hardware.Drive;
 import org.firstinspires.ftc.teamcode.hardware.Intake;
 import org.firstinspires.ftc.teamcode.hardware.Lift;
-import org.firstinspires.ftc.teamcode.utils.DriveUtils;
 //endregion
 
 //region --- Control Hub Config ---
@@ -98,15 +97,6 @@ public class RobotHardware {
     public Servo servoArmShoulder = null;
     public Servo servoArmClaw = null;
 
-    //--- Servo Position
-    public double servoIntakeLiftLeftPos = 0.0;
-    public double servoIntakeLiftRightPos = 0.0;
-
-    public double servoArmWristPos = 0.0;
-    public double servoArmElbowPos = 0.0;
-    public double servoArmShoulderPos = 0.0;
-    public double servoArmClawPos = 0.0;
-
     //------------------------------------------------------------------------------------------
     //--- Custom Hardware Classes
     //------------------------------------------------------------------------------------------
@@ -184,7 +174,7 @@ public class RobotHardware {
         //servoArmWrist.setDirection(Servo.Direction.REVERSE);
 
         //------------------------------------------------------------------------------------------
-        //--- Hardware
+        //--- Hardware Constructors
         //------------------------------------------------------------------------------------------
         intake = new Intake(
                 motorIntake,
@@ -226,6 +216,9 @@ public class RobotHardware {
                 _showInfo
         );
 
+        //------------------------------------------------------------------------------------------
+        //--- Messages
+        //------------------------------------------------------------------------------------------
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.update();
     }

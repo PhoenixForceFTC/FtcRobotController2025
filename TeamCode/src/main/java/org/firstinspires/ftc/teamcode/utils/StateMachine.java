@@ -2,20 +2,29 @@ package org.firstinspires.ftc.teamcode.utils;
 
 //region --- Imports ---
 import java.util.List;
-//endegion
+//endregion
 
 public class StateMachine<T>
 {
     private List<T> _steps;
     private int _currentStepIndex;
 
+    //region --- Constructor ---
     //--- Constructor to initialize steps and starting index
     public StateMachine(List<T> steps)
     {
-        _steps = steps;
-        _currentStepIndex = 0; // Start at the first step by default
+        this(steps, 0); // Default to starting at index 0
     }
 
+    //--- Constructor with initial index
+    public StateMachine(List<T> steps, int initialIndex)
+    {
+        _steps = steps;
+        _currentStepIndex = (initialIndex >= 0 && initialIndex < steps.size()) ? initialIndex : 0;
+    }
+    //endregion
+
+    //region --- Navigation Methods ---
     //--- Move to the next step
     public T next()
     {
@@ -36,12 +45,61 @@ public class StateMachine<T>
         return getCurrentStep();
     }
 
+    //--- Reset to the first step
+    public void reset()
+    {
+        _currentStepIndex = 0;
+    }
+
+    //--- Reset to a specific step index
+    public void resetToStep(int index)
+    {
+        if (index >= 0 && index < _steps.size())
+        {
+            _currentStepIndex = index;
+        }
+    }
+    //endregion
+
+    //region --- Retrieval Methods ---
     //--- Get the current step
     public T getCurrentStep()
     {
-        return _steps.get(_currentStepIndex);
+        return (_steps.isEmpty()) ? null : _steps.get(_currentStepIndex);
     }
 
+    //--- Get the first step
+    public T getFirst()
+    {
+        return (_steps.isEmpty()) ? null : _steps.get(0);
+    }
+
+    //--- Get the last step
+    public T getLast()
+    {
+        return (_steps.isEmpty()) ? null : _steps.get(_steps.size() - 1);
+    }
+
+    //--- Find the index of a specific step
+    public int findStepIndex(T step)
+    {
+        return _steps.indexOf(step); // Returns -1 if not found
+    }
+
+    //--- Jump to a specific step by value
+    public boolean jumpToStep(T step)
+    {
+        int index = findStepIndex(step);
+        if (index != -1)
+        {
+            _currentStepIndex = index;
+            return true; // Success
+        }
+        return false; // Step not found
+    }
+    //endregion
+
+    //region --- Modification Methods ---
     //--- Add a new step at a specific index
     public void addStep(int index, T step)
     {
@@ -58,20 +116,27 @@ public class StateMachine<T>
     public void removeStep(int index)
     {
         _steps.remove(index);
-        if (_currentStepIndex >= _steps.size()) {
-            _currentStepIndex = _steps.size() - 1; //--- Adjust index if out of bounds
+        if (_currentStepIndex >= _steps.size())
+        {
+            _currentStepIndex = _steps.size() - 1; // Adjust index if out of bounds
         }
     }
 
-    //--- Reset to the first step
-    public void reset()
+    //--- Replace a step at a specific index
+    public void replaceStep(int index, T newStep)
     {
-        _currentStepIndex = 0;
+        if (index >= 0 && index < _steps.size())
+        {
+            _steps.set(index, newStep);
+        }
     }
+    //endregion
 
+    //region --- Utility Methods ---
     //--- Get the current step index
     public int getCurrentStepIndex()
     {
         return _currentStepIndex;
     }
+    //endregion
 }
