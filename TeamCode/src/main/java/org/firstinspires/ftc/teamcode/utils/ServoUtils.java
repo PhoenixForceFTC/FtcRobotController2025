@@ -44,13 +44,18 @@ public class ServoUtils
         return servo.getPosition();
     }
 
+    public static void disable(Servo servo)
+    {
+        servo.getController().pwmDisable();
+    }
+
     private static double clampPosition(double position) {
         return Math.max(0.0, Math.min(1.0, position));
     }
 
 
     //--- TODO: Move to util class
-    public static void sleep(long milliseconds) {
+    private static void sleep(long milliseconds) {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {

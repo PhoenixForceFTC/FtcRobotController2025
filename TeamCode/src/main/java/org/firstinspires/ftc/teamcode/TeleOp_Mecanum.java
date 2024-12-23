@@ -86,6 +86,7 @@ public class TeleOp_Mecanum extends LinearOpMode
         //------------------------------------------------------------------------------------------
         //--- Hardware Initialize
         //------------------------------------------------------------------------------------------
+        _robot.arm.initialize();
         _robot.intake.initialize();
 
         //------------------------------------------------------------------------------------------
@@ -104,7 +105,7 @@ public class TeleOp_Mecanum extends LinearOpMode
             _robot.drive.directionDrive(0.5);  //--- D-pad for directional movement
             _robot.drive.arcadeDriveSpeedControl();  //--- Joysticks for mecanum movement
 
-            boolean fineTuneArm = false;
+            boolean fineTuneArm = true;
             if (fineTuneArm)
             {
                 _robot.arm.fineTuneArm();

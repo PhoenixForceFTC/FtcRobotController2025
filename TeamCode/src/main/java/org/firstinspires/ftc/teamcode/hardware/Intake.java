@@ -60,10 +60,10 @@ public class Intake
         _liftState = "IN";
         _spinState = "OFF";
 
-        liftIn();
+//        liftIn();
 
         //--- Keep the intake in place by default
-        MotorUtils.moveToTargetPosition(_motorIntake, 0, 1.0);
+//        MotorUtils.moveToTargetPosition(_motorIntake, 0, 1.0);
     }
 
     //--- Handles intake motor power based on gamepad input

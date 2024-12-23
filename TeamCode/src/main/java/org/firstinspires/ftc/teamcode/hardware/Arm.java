@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.hardware;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.utils.ServoUtils;
 import org.firstinspires.ftc.teamcode.utils.StateMachine;
 
@@ -60,8 +61,9 @@ public class Arm {
                 new ArmState(CLAW_CLOSED, WRIST_INTAKE,   ELBOW_INTAKE, SHOULDER_INTAKE,   LiftAction.BOTTOM),
                 //--- (more steps)
                 //--- Position to drop in basket
-                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_UP,    SHOULDER_FULL_BACK, LiftAction.HIGH_BASKET)
+                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_UP,    SHOULDER_FULL_BACK, LiftAction.HIGH_BASKET),
                 //--- (more steps)
+                new ArmState(CLAW_OPEN, WRIST_DELIVERY, ELBOW_UP, SHOULDER_FULL_BACK, LiftAction.HIGH_BASKET)
         );
         updateStateMachines(_currentStates);
     }
@@ -143,6 +145,14 @@ public class Arm {
     //endregion
 
     //region --- Arm Control ---
+    public void initialize()
+    {
+        _servoClawPos = ServoUtils.moveToPosition(_servoClaw, CLAW_OPEN);
+        _servoWristPos = ServoUtils.moveToPosition(_servoWrist,  WRIST_INTAKE);
+        _servoElbowPos = ServoUtils.moveToPosition(_servoElbow, ELBOW_INTAKE);
+        _servoShoulderPos = ServoUtils.moveToPosition(_servoShoulder, SHOULDER_FULL_BACK);
+    }
+
     public void controlArm()
     {
         if (!areStateMachinesInitialized())
@@ -150,7 +160,13 @@ public class Arm {
             _telemetry.addData("Error", "State machines are not initialized");
             return;
         }
-
+        if(_gamepad2.dpad_up)
+        {
+            _servoClawPos = ServoUtils.moveToPosition(_servoClaw, CLAW_OPEN);
+            _servoWristPos = ServoUtils.moveToPosition(_servoWrist,  WRIST_INTAKE);
+            _servoElbowPos = ServoUtils.moveToPosition(_servoElbow, ELBOW_GRABBED);
+            _servoShoulderPos = ServoUtils.moveToPosition(_servoShoulder, _shoulderStateMachine.next());
+        }
         if (_gamepad2.y)
         {
             switchMode(Mode.HIGH_BASKET);
@@ -380,13 +396,13 @@ public class Arm {
         double maxPos = 1.0;       // Maximum servo position
 
         //--- Adjust servo position based on button presses
-        if (_gamepad2.x)
+        if (_gamepad2.y)
         {
 //            servoWristPos = Math.min(servoWristPos + incrementPos, maxPos);
             _servoWristPos = 0.03; //--- Intake (pronated)
             ServoUtils.moveToPosition(_servoWrist, _servoWristPos);
         }
-        if (_gamepad2.b)
+        if (_gamepad2.a)
         {
 //            servoWristPos = Math.min(servoWristPos - incrementPos, minPos);
             _servoWristPos = 0.69; //--- Delivery (supinated)
@@ -411,17 +427,23 @@ public class Arm {
         double maxPos = 1.0;       // Maximum servo position
 
         //--- Adjust servo position based on button presses
-        if (_gamepad1.y)
-        {
-            _servoElbowPos = Math.min(_servoElbowPos + incrementPos, maxPos);
-            ServoUtils.moveToPosition(_servoElbow, _servoElbowPos);
-        }
         if (_gamepad1.a)
         {
-            _servoElbowPos = Math.min(_servoElbowPos - incrementPos, minPos);
+            _servoElbowPos = _servoElbowPos + incrementPos;
+            if (_servoElbowPos > maxPos) _servoElbowPos = maxPos;
             ServoUtils.moveToPosition(_servoElbow, _servoElbowPos);
         }
-        sleep(50);
+        if (_gamepad1.y)
+        {
+            _servoElbowPos = _servoElbowPos - incrementPos;
+            if (_servoElbowPos < minPos) _servoElbowPos = minPos;
+            ServoUtils.moveToPosition(_servoElbow, _servoElbowPos);
+        }
+        if (_gamepad1.right_stick_button)
+        {
+            ServoUtils.disable(_servoElbow);
+        }
+        sleep(25);
 
         //--- Show messages
         if (_showInfo)
@@ -436,21 +458,23 @@ public class Arm {
         //--- full back = 0.14
 
         double incrementPos = 0.01; // Amount to increment/decrement
-        double minPos = 0.0;       // Minimum servo position
-        double maxPos = 1.0;       // Maximum servo position
+        double minPos = 0.16;       // Minimum servo position
+        double maxPos = 0.74;       // Maximum servo position
 
         //--- Adjust servo position based on button presses
-        if (_gamepad2.y)
+        if (_gamepad1.x)
         {
-            _servoShoulderPos = Math.min(_servoShoulderPos + incrementPos, maxPos);
+            _servoShoulderPos = _servoShoulderPos + incrementPos;
+            if (_servoShoulderPos > maxPos) _servoShoulderPos = maxPos;
             ServoUtils.moveToPosition(_servoShoulder, _servoShoulderPos);
         }
-        if (_gamepad2.a)
+        if (_gamepad1.b)
         {
-            _servoShoulderPos = Math.min(_servoShoulderPos - incrementPos, minPos);
+            _servoShoulderPos = _servoShoulderPos - incrementPos;
+            if (_servoShoulderPos < minPos) _servoShoulderPos = minPos;
             ServoUtils.moveToPosition(_servoShoulder, _servoShoulderPos);
         }
-        sleep(50);
+        sleep(25);
 
         //--- Show messages
         if (_showInfo)
