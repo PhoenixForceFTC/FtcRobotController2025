@@ -22,29 +22,29 @@ Motor
 
 Servo
 0 - in-lspin (Intake Left Spinner)
-1 -
+1 - ????? (not working)
 2 - in-rspin (Intake Right Spinner)
 3 - in-lup (Intake Left Up/Down)
 4 - in-rup (Intake Right Up/Down)
-5 -
+5 - claw
 */
 //endregion
 
 //region --- Expansion Hub Config ---
 /*
 Motor
-0 - rl (Read Left)
-1 - rr (Read Right)
+0 - rl (Rear Left)
+1 - rr (Rear Right)
 2 - in-arm (Intake Extension Arm)
 3 -
 
 Servo
-0 -
-1 -
-2 - Arm Servo: arm1
-3 - Arm Servo: arm2
-4 - Arm Servo: arm3
-5 - Arm Servo: arm4
+0 - shoulder-r
+1 - elbow
+2 - wrist
+3 - ????? (not working)
+4 - ????? (not working)
+5 - shoulder-l
 
 I2C
 0 - color
@@ -94,7 +94,8 @@ public class RobotHardware {
     //--- Arm Servos
     public Servo servoArmWrist = null;
     public Servo servoArmElbow = null;
-    public Servo servoArmShoulder = null;
+    public Servo servoArmShoulderRight = null;
+    public Servo servoArmShoulderLeft = null;
     public Servo servoArmClaw = null;
 
     //------------------------------------------------------------------------------------------
@@ -165,10 +166,11 @@ public class RobotHardware {
         servoIntakeLiftLeft = myOpMode.hardwareMap.get(Servo.class, "in-lup"); //--- Intake Left Up/Down
         servoIntakeLiftRight = myOpMode.hardwareMap.get(Servo.class, "in-rup"); //--- Intake Right Up/Down
 
-        servoArmClaw = myOpMode.hardwareMap.get(Servo.class, "arm1"); //--- Arm Grabber / Claw
-        servoArmWrist = myOpMode.hardwareMap.get(Servo.class, "arm2"); //--- Arm Wrist
-        servoArmElbow = myOpMode.hardwareMap.get(Servo.class, "arm3"); //--- Arm Elbow
-        servoArmShoulder = myOpMode.hardwareMap.get(Servo.class, "arm4"); //--- Arm Shoulder
+        servoArmClaw = myOpMode.hardwareMap.get(Servo.class, "claw"); //--- Arm Grabber / Claw
+        servoArmWrist = myOpMode.hardwareMap.get(Servo.class, "wrist"); //--- Arm Wrist
+        servoArmElbow = myOpMode.hardwareMap.get(Servo.class, "elbow"); //--- Arm Elbow
+        servoArmShoulderRight = myOpMode.hardwareMap.get(Servo.class, "shoulder-r"); //--- Arm Shoulder
+        servoArmShoulderLeft = myOpMode.hardwareMap.get(Servo.class, "shoulder-l"); //--- Arm Shoulder
 
         //--- Configure Servos
         //servoArmWrist.setDirection(Servo.Direction.REVERSE);
@@ -209,7 +211,8 @@ public class RobotHardware {
                 servoArmClaw,
                 servoArmWrist,
                 servoArmElbow,
-                servoArmShoulder,
+                servoArmShoulderRight,
+                servoArmShoulderLeft,
                 myOpMode.gamepad1,
                 myOpMode.gamepad2,
                 myOpMode.telemetry,

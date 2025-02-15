@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.hardware.Arm;
 
 //region --- Controls ---
 //----------------------------------------------------------------------
-// Gamepad 1 -----------------------------------------------------------
+// Joystick 1 -----------------------------------------------------------
 //  - Left Stick        - Mecanum Drive
 //  - Right Stick       - Mecanum Rotate
 //  - Left Stick Click  - Drive Speed High/Low
@@ -32,7 +32,7 @@ import org.firstinspires.ftc.teamcode.hardware.Arm;
 //  - B (○)             - Intake Out
 //
 //----------------------------------------------------------------------
-// Gamepad 2 -----------------------------------------------------------
+// Joystick 2 -----------------------------------------------------------
 //  - Left Stick        -
 //  - Right Stick       -
 //  - Left Stick Click  -

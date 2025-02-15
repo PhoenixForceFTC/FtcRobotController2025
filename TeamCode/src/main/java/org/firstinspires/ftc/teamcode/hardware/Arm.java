@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode.hardware;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.utils.MotorUtils;
 import org.firstinspires.ftc.teamcode.utils.ServoUtils;
 import org.firstinspires.ftc.teamcode.utils.StateMachine;
 
@@ -16,6 +15,7 @@ import java.util.List;
 public class Arm {
 
     //region --- Constants ---
+    private static final double CLAW_WIDE = 0.5;
     private static final double CLAW_OPEN = 0.61;
     private static final double CLAW_CLOSED = 0.76;
 
@@ -32,6 +32,7 @@ public class Arm {
     private static final double SHOULDER_MIDDLE = 0.59;
     private static final double SHOULDER_FULL_BACK = 0.40;
     private static final double SHOULDER_HOOKED = 0.50;
+
     //endregion
 
     //region --- State Machine Steps ---
@@ -56,14 +57,14 @@ public class Arm {
         // Add more as needed
         _currentStates = Arrays.asList(
                 //--- Arm is positioned for the intake
-                new ArmState(CLAW_OPEN,   WRIST_INTAKE,   ELBOW_INTAKE, SHOULDER_INTAKE,   LiftAction.BOTTOM),
+                new ArmState(CLAW_OPEN,   WRIST_INTAKE,   ELBOW_INTAKE, SHOULDER_INTAKE,    LiftAction.BOTTOM),
                 //--- Grab the block from intake
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE,   ELBOW_INTAKE, SHOULDER_INTAKE,   LiftAction.BOTTOM),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE,   ELBOW_INTAKE, SHOULDER_INTAKE,    LiftAction.BOTTOM),
                 //--- (more steps)
                 //--- Position to drop in basket
-                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_UP,    SHOULDER_FULL_BACK, LiftAction.HIGH_BASKET),
+                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_UP,     SHOULDER_FULL_BACK, LiftAction.HIGH_BASKET),
                 //--- (more steps)
-                new ArmState(CLAW_OPEN, WRIST_DELIVERY, ELBOW_UP, SHOULDER_FULL_BACK, LiftAction.HIGH_BASKET)
+                new ArmState(CLAW_OPEN, WRIST_DELIVERY,   ELBOW_UP,     SHOULDER_FULL_BACK, LiftAction.HIGH_BASKET)
         );
         updateStateMachines(_currentStates);
     }
@@ -104,7 +105,8 @@ public class Arm {
     private final Servo _servoClaw;
     private final Servo _servoWrist;
     private final Servo _servoElbow;
-    private final Servo _servoShoulder;
+    private final Servo _servoShoulderRight;
+    private final Servo _servoShoulderLeft;
     private final Gamepad _gamepad1;
     private final Gamepad _gamepad2;
     private final Telemetry _telemetry;
@@ -114,26 +116,29 @@ public class Arm {
     private StateMachine<Double> _clawStateMachine;
     private StateMachine<Double> _wristStateMachine;
     private StateMachine<Double> _elbowStateMachine;
-    private StateMachine<Double> _shoulderStateMachine;
+    private StateMachine<Double> _shoulderRightStateMachine;
+    private StateMachine<Double> _shoulderLeftStateMachine;
     private StateMachine<Integer> _liftStateMachine;
 
     private double _servoClawPos = 0.0;
     private double _servoWristPos = 0.0;
     private double _servoElbowPos = 0.0;
-    private double _servoShoulderPos = 0.0;
+    private double _servoShoulderRightPos = 0.0;
+    private double _servoShoulderLeftPos = 0.0;
 
     private Mode _currentMode = Mode.SPECIMENS; //--- Default mode
     private List<ArmState> _currentStates;
     //endregion
 
     //region --- Constructor ---
-    public Arm(Servo servoClaw, Servo servoWrist, Servo servoElbow, Servo servoShoulder,
+    public Arm(Servo servoClaw, Servo servoWrist, Servo servoElbow, Servo servoShoulderRight, Servo servoShoulderLeft,
                Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry, boolean showInfo, Lift robotLift)
     {
         this._servoClaw = servoClaw;
         this._servoWrist = servoWrist;
         this._servoElbow = servoElbow;
-        this._servoShoulder = servoShoulder;
+        this._servoShoulderRight = servoShoulderRight;
+        this._servoShoulderLeft = servoShoulderLeft;
         this._gamepad1 = gamepad1;
         this._gamepad2 = gamepad2;
         this._telemetry = telemetry;
@@ -150,7 +155,8 @@ public class Arm {
         _servoClawPos = ServoUtils.moveToPosition(_servoClaw, CLAW_OPEN);
         _servoWristPos = ServoUtils.moveToPosition(_servoWrist,  WRIST_INTAKE);
         _servoElbowPos = ServoUtils.moveToPosition(_servoElbow, ELBOW_INTAKE);
-        _servoShoulderPos = ServoUtils.moveToPosition(_servoShoulder, SHOULDER_FULL_BACK);
+        _servoShoulderRightPos = ServoUtils.moveToPosition(_servoShoulderRight, SHOULDER_FULL_BACK);
+        _servoShoulderLeftPos = ServoUtils.moveToPosition(_servoShoulderLeft, SHOULDER_FULL_BACK);
     }
 
     public void controlArm()
@@ -165,7 +171,8 @@ public class Arm {
             _servoClawPos = ServoUtils.moveToPosition(_servoClaw, CLAW_OPEN);
             _servoWristPos = ServoUtils.moveToPosition(_servoWrist,  WRIST_INTAKE);
             _servoElbowPos = ServoUtils.moveToPosition(_servoElbow, ELBOW_GRABBED);
-            _servoShoulderPos = ServoUtils.moveToPosition(_servoShoulder, _shoulderStateMachine.next());
+            _servoShoulderRightPos = ServoUtils.moveToPosition(_servoShoulderRight, _shoulderRightStateMachine.next());
+            _servoShoulderLeftPos = ServoUtils.moveToPosition(_servoShoulderLeft, _shoulderLeftStateMachine.next());
         }
         if (_gamepad2.y)
         {
@@ -202,7 +209,8 @@ public class Arm {
             _telemetry.addData("Arm -> Claw Pos", "%4.2f", _servoClawPos);
             _telemetry.addData("Arm -> Wrist Pos", "%4.2f", _servoWristPos);
             _telemetry.addData("Arm -> Elbow Pos", "%4.2f", _servoElbowPos);
-            _telemetry.addData("Arm -> Shoulder Pos", "%4.2f", _servoShoulderPos);
+            _telemetry.addData("Arm -> Shoulder R Pos", "%4.2f", _servoShoulderRightPos);
+            _telemetry.addData("Arm -> Shoulder L Pos", "%4.2f", _servoShoulderLeftPos);
             _telemetry.addData("Lift -> Lift Pos", _robotLift.getCurrentLiftPosition());
         }
     }
@@ -211,7 +219,8 @@ public class Arm {
         _clawStateMachine = new StateMachine<>(extractValues(states, ArmState::get_claw));
         _wristStateMachine = new StateMachine<>(extractValues(states, ArmState::get_wrist));
         _elbowStateMachine = new StateMachine<>(extractValues(states, ArmState::get_elbow));
-        _shoulderStateMachine = new StateMachine<>(extractValues(states, ArmState::get_shoulder));
+        _shoulderRightStateMachine = new StateMachine<>(extractValues(states, ArmState::get_shoulderRight));
+        _shoulderLeftStateMachine = new StateMachine<>(extractValues(states, ArmState::get_shoulderLeft));
     }
 
     private boolean areStateMachinesInitialized()
@@ -219,7 +228,8 @@ public class Arm {
         return _clawStateMachine != null &&
                 _wristStateMachine != null &&
                 _elbowStateMachine != null &&
-                _shoulderStateMachine != null &&
+                _shoulderRightStateMachine != null &&
+                _shoulderLeftStateMachine != null &&
                 _currentStates != null;
     }
 
@@ -259,7 +269,8 @@ public class Arm {
         if (_clawStateMachine != null) _clawStateMachine.reset();
         if (_wristStateMachine != null) _wristStateMachine.reset();
         if (_elbowStateMachine != null) _elbowStateMachine.reset();
-        if (_shoulderStateMachine != null) _shoulderStateMachine.reset();
+        if (_shoulderRightStateMachine != null) _shoulderRightStateMachine.reset();
+        if (_shoulderLeftStateMachine != null) _shoulderLeftStateMachine.reset();
     }
 
     private void moveToNextState() {
@@ -267,7 +278,8 @@ public class Arm {
         _servoClawPos = ServoUtils.moveToPosition(_servoClaw, _clawStateMachine.next());
         _servoWristPos = ServoUtils.moveToPosition(_servoWrist, _wristStateMachine.next());
         _servoElbowPos = ServoUtils.moveToPosition(_servoElbow, _elbowStateMachine.next());
-        _servoShoulderPos = ServoUtils.moveToPosition(_servoShoulder, _shoulderStateMachine.next());
+        _servoShoulderRightPos = ServoUtils.moveToPosition(_servoShoulderRight, _shoulderRightStateMachine.next());
+        _servoShoulderLeftPos = ServoUtils.moveToPosition(_servoShoulderLeft, _shoulderLeftStateMachine.next());
 
         //--- Execute the lift action for the current state
         _currentStates.get(_clawStateMachine.getCurrentStepIndex()).executeLiftAction(_robotLift);
@@ -278,7 +290,8 @@ public class Arm {
         _servoClawPos = ServoUtils.moveToPosition(_servoClaw, _clawStateMachine.previous());
         _servoWristPos = ServoUtils.moveToPosition(_servoWrist, _wristStateMachine.previous());
         _servoElbowPos = ServoUtils.moveToPosition(_servoElbow, _elbowStateMachine.previous());
-        _servoShoulderPos = ServoUtils.moveToPosition(_servoShoulder, _shoulderStateMachine.previous());
+        _servoShoulderRightPos = ServoUtils.moveToPosition(_servoShoulderRight, _shoulderRightStateMachine.previous());
+        _servoShoulderLeftPos = ServoUtils.moveToPosition(_servoShoulderLeft, _shoulderLeftStateMachine.previous());
 
         //--- Execute the lift action for the current state
         _currentStates.get(_clawStateMachine.getCurrentStepIndex()).executeLiftAction(_robotLift);
@@ -310,14 +323,15 @@ public class Arm {
 
     //region --- ArmState Class ---
     private static class ArmState {
-        private final double _claw, _wrist, _elbow, _shoulder;
+        private final double _claw, _wrist, _elbow, _shoulderRight, _shoulderLeft;
         private final LiftAction _liftAction;
 
         public ArmState(double claw, double wrist, double elbow, double shoulder, LiftAction liftAction) {
             _claw = claw;
             _wrist = wrist;
             _elbow = elbow;
-            _shoulder = shoulder;
+            _shoulderRight = shoulder;
+            _shoulderLeft = shoulder;
             _liftAction = liftAction;
         }
 
@@ -333,8 +347,12 @@ public class Arm {
             return _elbow;
         }
 
-        public double get_shoulder() {
-            return _shoulder;
+        public double get_shoulderRight() {
+            return _shoulderRight;
+        }
+
+        public double get_shoulderLeft() {
+            return _shoulderLeft;
         }
 
         public void executeLiftAction(Lift lift) {
@@ -349,10 +367,41 @@ public class Arm {
 
     public void fineTuneArm()
     {
-        fineTuneClaw();
-        fineTuneWrist();
+        //fineTuneClaw();
+        fineTuneClawOpenClose();
+        //fineTuneWrist();
+        fineTuneWristUpDown();
         fineTuneElbow();
         fineTuneShoulder();
+    }
+
+    private void fineTuneClawOpenClose()
+    {
+        //--- wide open = 0.61
+        //--- closed = 0.76
+
+        double incrementPos = 0.01; // Amount to increment/decrement
+        double minPos = 0.0;       // Minimum servo position
+        double maxPos = 1.0;       // Maximum servo position
+
+        //--- Adjust servo position based on button presses
+        if (_gamepad2.x)
+        {
+            _servoClawPos = 0.5; //--- Closed
+            ServoUtils.moveToPosition(_servoClaw, _servoClawPos);
+        }
+        if (_gamepad2.b)
+        {
+            _servoClawPos = 0.76; //--- Wide open
+            ServoUtils.moveToPosition(_servoClaw, _servoClawPos);
+        }
+        sleep(50);
+
+        //--- Show messages
+        if (_showInfo)
+        {
+            _telemetry.addData("Arm -> Claw", "%4.2f", _servoClawPos);
+        }
     }
 
     private void fineTuneClaw()
@@ -367,14 +416,12 @@ public class Arm {
         //--- Adjust servo position based on button presses
         if (_gamepad2.x)
         {
-//            servoClawPos = Math.min(servoClawPos + incrementPos, maxPos);
-            _servoClawPos = 0.61; //--- Closed
+            _servoClawPos = Math.min(_servoClawPos + incrementPos, maxPos);
             ServoUtils.moveToPosition(_servoClaw, _servoClawPos);
         }
         if (_gamepad2.b)
         {
-//            servoClawPos = Math.min(servoClawPos - incrementPos, minPos);
-            _servoClawPos = 0.76; //--- Wide open
+            _servoClawPos = Math.min(_servoClawPos - incrementPos, minPos);
             ServoUtils.moveToPosition(_servoClaw, _servoClawPos);
         }
         sleep(50);
@@ -383,6 +430,35 @@ public class Arm {
         if (_showInfo)
         {
             _telemetry.addData("Arm -> Claw", "%4.2f", _servoClawPos);
+        }
+    }
+
+    private void fineTuneWristUpDown()
+    {
+        //--- intake (pronated) = 0.03
+        //--- delivery (supinated) = 0.69
+
+        double incrementPos = 0.01; // Amount to increment/decrement
+        double minPos = 0.0;       // Minimum servo position
+        double maxPos = 1.0;       // Maximum servo position
+
+        //--- Adjust servo position based on button presses
+        if (_gamepad2.y)
+        {
+            _servoWristPos = 0.03; //--- Intake (pronated)
+            ServoUtils.moveToPosition(_servoWrist, _servoWristPos);
+        }
+        if (_gamepad2.a)
+        {
+            _servoWristPos = 0.69; //--- Delivery (supinated)
+            ServoUtils.moveToPosition(_servoWrist, _servoWristPos);
+        }
+        sleep(50);
+
+        //--- Show messages
+        if (_showInfo)
+        {
+            _telemetry.addData("Arm -> Wrist", "%4.2f", _servoWristPos);
         }
     }
 
@@ -398,14 +474,12 @@ public class Arm {
         //--- Adjust servo position based on button presses
         if (_gamepad2.y)
         {
-//            servoWristPos = Math.min(servoWristPos + incrementPos, maxPos);
-            _servoWristPos = 0.03; //--- Intake (pronated)
+            _servoWristPos = Math.min(_servoWristPos + incrementPos, maxPos);
             ServoUtils.moveToPosition(_servoWrist, _servoWristPos);
         }
         if (_gamepad2.a)
         {
-//            servoWristPos = Math.min(servoWristPos - incrementPos, minPos);
-            _servoWristPos = 0.69; //--- Delivery (supinated)
+            _servoWristPos = Math.min(_servoWristPos - incrementPos, minPos);
             ServoUtils.moveToPosition(_servoWrist, _servoWristPos);
         }
         sleep(50);
@@ -464,22 +538,31 @@ public class Arm {
         //--- Adjust servo position based on button presses
         if (_gamepad1.x)
         {
-            _servoShoulderPos = _servoShoulderPos + incrementPos;
-            if (_servoShoulderPos > maxPos) _servoShoulderPos = maxPos;
-            ServoUtils.moveToPosition(_servoShoulder, _servoShoulderPos);
+            _servoShoulderRightPos = _servoShoulderRightPos + incrementPos;
+            if (_servoShoulderRightPos > maxPos) _servoShoulderRightPos = maxPos;
+            ServoUtils.moveToPosition(_servoShoulderRight, _servoShoulderRightPos);
+
+            _servoShoulderLeftPos = _servoShoulderLeftPos + incrementPos;
+            if (_servoShoulderLeftPos > maxPos) _servoShoulderLeftPos = maxPos;
+            ServoUtils.moveToPosition(_servoShoulderLeft, _servoShoulderLeftPos);
         }
         if (_gamepad1.b)
         {
-            _servoShoulderPos = _servoShoulderPos - incrementPos;
-            if (_servoShoulderPos < minPos) _servoShoulderPos = minPos;
-            ServoUtils.moveToPosition(_servoShoulder, _servoShoulderPos);
+            _servoShoulderRightPos = _servoShoulderRightPos - incrementPos;
+            if (_servoShoulderRightPos < minPos) _servoShoulderRightPos = minPos;
+            ServoUtils.moveToPosition(_servoShoulderRight, _servoShoulderRightPos);
+
+            _servoShoulderLeftPos = _servoShoulderLeftPos - incrementPos;
+            if (_servoShoulderLeftPos < minPos) _servoShoulderLeftPos = minPos;
+            ServoUtils.moveToPosition(_servoShoulderLeft, _servoShoulderLeftPos);
         }
         sleep(25);
 
         //--- Show messages
         if (_showInfo)
         {
-            _telemetry.addData("Arm -> Shoulder", "%4.2f", _servoShoulderPos);
+            _telemetry.addData("Arm -> R Shoulder", "%4.2f", _servoShoulderRightPos);
+            _telemetry.addData("Arm -> L Shoulder", "%4.2f", _servoShoulderLeftPos);
         }
     }
 
