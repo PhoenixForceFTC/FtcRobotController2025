@@ -56,15 +56,20 @@ public class Arm {
     {
         // Add more as needed
         _currentStates = Arrays.asList(
+                //--- Arm is positioned above for the intake
+                new ArmState(CLAW_OPEN,   WRIST_INTAKE, 0.48, 0.55, LiftAction.BOTTOM),
                 //--- Arm is positioned for the intake
-                new ArmState(CLAW_OPEN,   WRIST_INTAKE,   ELBOW_INTAKE, SHOULDER_INTAKE,    LiftAction.BOTTOM),
+                new ArmState(CLAW_OPEN,   WRIST_INTAKE, 0.40, 0.58, LiftAction.BOTTOM),
                 //--- Grab the block from intake
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE,   ELBOW_INTAKE, SHOULDER_INTAKE,    LiftAction.BOTTOM),
-                //--- (more steps)
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.40, 0.58, LiftAction.BOTTOM),
+                //--- Bend arm up to extract block
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.23, 0.51, LiftAction.BOTTOM),
                 //--- Position to drop in basket
-                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_UP,     SHOULDER_FULL_BACK, LiftAction.HIGH_BASKET),
-                //--- (more steps)
-                new ArmState(CLAW_OPEN, WRIST_DELIVERY,   ELBOW_UP,     SHOULDER_FULL_BACK, LiftAction.HIGH_BASKET)
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.7, 0.3, LiftAction.HIGH_BASKET),
+                //--- Position to drop in basket
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 1.0, 0.3, LiftAction.HIGH_BASKET),
+                //--- Drop in basket
+                new ArmState(CLAW_OPEN, WRIST_INTAKE, 1.0, 0.3, LiftAction.HIGH_BASKET)
         );
         updateStateMachines(_currentStates);
     }
