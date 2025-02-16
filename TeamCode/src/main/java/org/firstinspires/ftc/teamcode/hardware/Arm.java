@@ -152,11 +152,14 @@ public class Arm {
     //region --- Arm Control ---
     public void initialize()
     {
+        //TODO: Can't move on initialization this season
+        /*
         _servoClawPos = ServoUtils.moveToPosition(_servoClaw, CLAW_OPEN);
         _servoWristPos = ServoUtils.moveToPosition(_servoWrist,  WRIST_INTAKE);
         _servoElbowPos = ServoUtils.moveToPosition(_servoElbow, ELBOW_INTAKE);
         _servoShoulderRightPos = ServoUtils.moveToPosition(_servoShoulderRight, SHOULDER_FULL_BACK);
         _servoShoulderLeftPos = ServoUtils.moveToPosition(_servoShoulderLeft, SHOULDER_FULL_BACK);
+         */
     }
 
     public void controlArm()
@@ -501,13 +504,13 @@ public class Arm {
         double maxPos = 1.0;       // Maximum servo position
 
         //--- Adjust servo position based on button presses
-        if (_gamepad1.a)
+        if (_gamepad1.x)
         {
             _servoElbowPos = _servoElbowPos + incrementPos;
             if (_servoElbowPos > maxPos) _servoElbowPos = maxPos;
             ServoUtils.moveToPosition(_servoElbow, _servoElbowPos);
         }
-        if (_gamepad1.y)
+        if (_gamepad1.b)
         {
             _servoElbowPos = _servoElbowPos - incrementPos;
             if (_servoElbowPos < minPos) _servoElbowPos = minPos;
@@ -536,7 +539,7 @@ public class Arm {
         double maxPos = 0.74;       // Maximum servo position
 
         //--- Adjust servo position based on button presses
-        if (_gamepad1.x)
+        if (_gamepad1.a)
         {
             _servoShoulderRightPos = _servoShoulderRightPos + incrementPos;
             if (_servoShoulderRightPos > maxPos) _servoShoulderRightPos = maxPos;
@@ -546,7 +549,7 @@ public class Arm {
             if (_servoShoulderLeftPos > maxPos) _servoShoulderLeftPos = maxPos;
             ServoUtils.moveToPosition(_servoShoulderLeft, _servoShoulderLeftPos);
         }
-        if (_gamepad1.b)
+        if (_gamepad1.y)
         {
             _servoShoulderRightPos = _servoShoulderRightPos - incrementPos;
             if (_servoShoulderRightPos < minPos) _servoShoulderRightPos = minPos;

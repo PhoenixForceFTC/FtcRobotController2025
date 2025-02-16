@@ -4,59 +4,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.hardware.Arm;
 //endregion
 
-//region --- Controls ---
-//----------------------------------------------------------------------
-// Joystick 1 -----------------------------------------------------------
-//  - Left Stick        - Mecanum Drive
-//  - Right Stick       - Mecanum Rotate
-//  - Left Stick Click  - Drive Speed High/Low
-//  - Right Stick Click - Rotate Speed High/Low
-//
-//  - Dpad Up           - Move Forward (Slow)
-//  - Dpad Down         - Move Back (Slow)
-//  - Dpad Right        - Move Right (Slow)
-//  - Dpad Left         - Move Left (Slow)
-//
-//  - Right Trigger     - Intake Spin In
-//  - Right Bumpers     - Intake Spin Out
-//  - Left Trigger      - Intake Arm Out
-//  - Left Bumpers      - Intake Arm Back
-//
-//  - Y (▲)             - Next Step in Current Mode
-//  - A (✕)             - Previous Step in Current Mode
-//  - X (■)             - Intake In
-//  - B (○)             - Intake Out
-//
-//----------------------------------------------------------------------
-// Joystick 2 -----------------------------------------------------------
-//  - Left Stick        -
-//  - Right Stick       -
-//  - Left Stick Click  -
-//  - Right Stick Click -
-//
-//  - Dpad Up           - ??Manual Arm Up
-//  - Dpad Down         - ??Manual Arm Down (Reset Encoder)
-//  - Dpad Right        - ??Manual Intake Out
-//  - Dpad Left         - ??Manual Intake In (Reset Encoder)
-//
-//  - Right Trigger     -
-//  - Right Bumpers     -
-//  - Left Trigger      -
-//  - Left Bumpers      -
-
-//  - Y (▲)             - Mode -> High Basket
-//  - A (✕)             - Mode -> Low Basket
-//  - X (■)             - Mode -> Climbing
-//  - B (○)             - Mode -> Specimens
-//----------------------------------------------------------------------
-//endregion
-
-@TeleOp(name="TeleOp", group="1")
-public class TeleOp_Mecanum extends LinearOpMode
+@TeleOp(name="Fine Tune", group="2")
+public class TeleOp_Finetune extends LinearOpMode
 {
     //------------------------------------------------------------------------------------------
     // Variables
@@ -102,20 +53,11 @@ public class TeleOp_Mecanum extends LinearOpMode
             //------------------------------------------------------------------------------------------
             //--- Drive
             //------------------------------------------------------------------------------------------
-            //_robot.drive.directionDrive(0.5);  //--- D-pad for directional movement
+            _robot.drive.directionDrive(0.5);  //--- D-pad for directional movement
             _robot.drive.arcadeDriveSpeedControl();  //--- Joysticks for mecanum movement
 
-            //------------------------------------------------------------------------------------------
-            //--- Intake
-            //------------------------------------------------------------------------------------------
-            _robot.intake.intakeByEncoder();
-            _robot.intake.setSpinnerControls();
-            _robot.intake.setLiftArmControls();
-
-            //------------------------------------------------------------------------------------------
-            //--- Arm
-            //------------------------------------------------------------------------------------------
-            _robot.arm.controlArm();
+            //--- Fine tuning positions
+            _robot.arm.fineTuneArm();
 
             //------------------------------------------------------------------------------------------
             //--- Update Telemetry Display
