@@ -19,8 +19,8 @@ public class Arm {
     private static final double CLAW_OPEN = 0.61;
     private static final double CLAW_CLOSED = 0.76;
 
-    private static final double WRIST_INTAKE = 0.69;
-    private static final double WRIST_DELIVERY = 0.03;
+    private static final double WRIST_INTAKE = 0.03;
+    private static final double WRIST_DELIVERY = 0.69;
 
     private static final double ELBOW_INTAKE = 0.31;
     private static final double ELBOW_GRABBED = 0.38;
@@ -39,15 +39,63 @@ public class Arm {
     private void stepsForSpecimens() {
         _currentStates = Arrays.asList(
                 //--- Arm is grabbing specimens from wall
-                new ArmState(CLAW_OPEN,   WRIST_INTAKE,   ELBOW_MIDDLE,  SHOULDER_MIDDLE,    LiftAction.BOTTOM),
+                //new ArmState(CLAW_OPEN,   WRIST_INTAKE,   0.78,  0.61, LiftAction.BOTTOM),
                 //--- Grab specimen
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE,   ELBOW_MIDDLE,  SHOULDER_MIDDLE,    LiftAction.BOTTOM),
+                //new ArmState(CLAW_CLOSED, WRIST_INTAKE,   0.78,  0.61, LiftAction.BOTTOM),
                 //--- Arm moves up
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE,   ELBOW_GRABBED, SHOULDER_MIDDLE,    LiftAction.BOTTOM),
+                //new ArmState(CLAW_CLOSED, WRIST_INTAKE,   0.78, 0.35,  LiftAction.BOTTOM),
+                //--- Arm up, rotate specimen
+                //new ArmState(CLAW_CLOSED, WRIST_DELIVERY, 0.78, 0.35,  LiftAction.BOTTOM)
+
+
+                //--- Lance Test
+                //new ArmState(CLAW_OPEN, WRIST_DELIVERY, 0.76, 0.43,  LiftAction.BOTTOM),
+                //---
+                //new ArmState(CLAW_CLOSED, WRIST_DELIVERY, 0.76, 0.43,  LiftAction.BOTTOM),
+                //---
+                //new ArmState(CLAW_CLOSED, WRIST_DELIVERY, 0.63, 0.43,  LiftAction.BOTTOM),
+
+                //new ArmState(CLAW_CLOSED, WRIST_DELIVERY, 0.63, 0.27,  LiftAction.BOTTOM)
+
+                /*
+                //--- Sashi Test (almost works -- not quite enough power to click on)
+                new ArmState(CLAW_OPEN, WRIST_DELIVERY, 0.73, 0.41,  LiftAction.BOTTOM),
+                //---
+                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, 0.73, 0.41,  LiftAction.BOTTOM),
+                //---
+                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, 0.77, 0.40,  LiftAction.BOTTOM),
+
+                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, 0.77, 0,  LiftAction.BOTTOM)
+*/
+
+                //--- Lift to attach (WORKS -- but not against base)
+                /*
+                new ArmState(CLAW_OPEN, WRIST_DELIVERY, 0.96, 0.41,  LiftAction.BOTTOM),
+                //---
+                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, 0.96, 0.41,  LiftAction.BOTTOM),
+                //---
+                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, 0.96, 0.41,  LiftAction.LOW_BASKET),
+                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, 0.96, 0.41,  LiftAction.BOTTOM),
+                new ArmState(CLAW_OPEN, WRIST_DELIVERY, 0.96, 0.41,  LiftAction.BOTTOM)
+*/
+
+                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.79, 0.42,  LiftAction.BOTTOM),
+                //---
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.42,  LiftAction.BOTTOM),
+                //---
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.42,  LiftAction.LOW_BASKET),
+                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.79, 0.42,  LiftAction.BOTTOM)
+
+
+
+                //new ArmState(CLAW_CLOSED, WRIST_DELIVERY, 0.96, 0.41,  LiftAction.BOTTOM),
+                //new ArmState(CLAW_OPEN, WRIST_DELIVERY, 0.96, 0.41,  LiftAction.BOTTOM)
+
+
                 //--- Arm is ready to hook on the bar
-                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_UP,      SHOULDER_FULL_BACK, LiftAction.BOTTOM),
+                //new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_UP,      SHOULDER_FULL_BACK, LiftAction.BOTTOM),
                 //--- Specimen is hooked
-                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_HOOKED,  SHOULDER_HOOKED,    LiftAction.BOTTOM)
+                //new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_HOOKED,  SHOULDER_HOOKED,    LiftAction.BOTTOM)
         );
         updateStateMachines(_currentStates);
     }
@@ -57,19 +105,19 @@ public class Arm {
         // Add more as needed
         _currentStates = Arrays.asList(
                 //--- Arm is positioned above for the intake
-                new ArmState(CLAW_OPEN,   WRIST_INTAKE, 0.48, 0.55, LiftAction.BOTTOM),
+                new ArmState(CLAW_OPEN,   WRIST_INTAKE, 0.31, 0.50, LiftAction.BOTTOM),
                 //--- Arm is positioned for the intake
-                new ArmState(CLAW_OPEN,   WRIST_INTAKE, 0.40, 0.58, LiftAction.BOTTOM),
+                new ArmState(CLAW_OPEN,   WRIST_INTAKE, 0.31, 0.55, LiftAction.BOTTOM),
                 //--- Grab the block from intake
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.40, 0.58, LiftAction.BOTTOM),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.31, 0.55, LiftAction.BOTTOM),
                 //--- Bend arm up to extract block
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.23, 0.51, LiftAction.BOTTOM),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.19, 0.45, LiftAction.BOTTOM),
                 //--- Position to drop in basket
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.7, 0.3, LiftAction.HIGH_BASKET),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.51, 0.3, LiftAction.HIGH_BASKET),
                 //--- Position to drop in basket
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 1.0, 0.3, LiftAction.HIGH_BASKET),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.75, 0.3, LiftAction.HIGH_BASKET),
                 //--- Drop in basket
-                new ArmState(CLAW_OPEN, WRIST_INTAKE, 1.0, 0.3, LiftAction.HIGH_BASKET)
+                new ArmState(CLAW_OPEN,   WRIST_INTAKE, 0.75, 0.3, LiftAction.HIGH_BASKET)
         );
         updateStateMachines(_currentStates);
     }
@@ -219,7 +267,8 @@ public class Arm {
             _telemetry.addData("Arm -> Elbow Pos", "%4.2f", _servoElbowPos);
             _telemetry.addData("Arm -> Shoulder R Pos", "%4.2f", _servoShoulderRightPos);
             _telemetry.addData("Arm -> Shoulder L Pos", "%4.2f", _servoShoulderLeftPos);
-            _telemetry.addData("Lift -> Lift Pos", _robotLift.getCurrentLiftPosition());
+            //_telemetry.addData("Lift -> Lift Pos", _robotLift.getCurrentLiftPosition());
+            _robotLift.getTelemetry();
         }
     }
 

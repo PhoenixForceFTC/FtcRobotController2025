@@ -11,7 +11,7 @@ public class Lift
 {
     //region --- Constants ---
     private static final int LIFT_TOP_BASKET_POSITION = 2000;
-    private static final int LIFT_LOW_BASKET_POSITION = 1000;
+    private static final int LIFT_LOW_BASKET_POSITION = 650; //--- was 1200 -- for putting on the specimen
     private static final int LIFT_BOTTOM_POSITION = 0;
     //endregion
 
@@ -101,6 +101,14 @@ public class Lift
     {
         MotorUtils.moveToTargetPosition(_motorLiftLeft, LIFT_LOW_BASKET_POSITION, -1.0);
         MotorUtils.moveToTargetPosition(_motorLiftRight, LIFT_LOW_BASKET_POSITION, -1.0);
+
+    }
+
+    public void getTelemetry(){
+        _telemetry.addData("Lift -> Target Position Left", _motorLiftLeft.getTargetPosition());
+        _telemetry.addData("Lift -> Target Position Right", _motorLiftRight.getTargetPosition());
+        _telemetry.addData("Lift -> Current Position Left", MotorUtils.getCurrentPosition(_motorLiftLeft));
+        _telemetry.addData("Lift -> Current Position Right", MotorUtils.getCurrentPosition(_motorLiftRight));
     }
 
     public void moveToBottom()
