@@ -50,7 +50,7 @@ I2C
 0 - color
 1 -
 2 - camera
-3 - odom (odometry)
+3 - odo (odometry)
 */
 //endregion
 
