@@ -13,16 +13,23 @@ import org.firstinspires.ftc.teamcode.utils.ServoUtils;
 public class Intake
 {
     //region --- Constants ---
-    private static final int MOTOR_INTAKE_MAX_POSITION = 150; //--- Maximum position (fully extended)
+    private static final int MOTOR_INTAKE_MAX_POSITION = 1200; //--- Maximum position (fully extended)
     private static final int MOTOR_INTAKE_MIN_POSITION = -30; //--- Minimum position (fully retracted)
     private static final double SERVO_INTAKE_LIFT_IN = 0.85;  //--- Lift in position
     private static final double SERVO_INTAKE_LIFT_OUT = 0.43; //--- Lift out position
     //endregion
 
+    //--- Constants for incremental adjustments
+    private static final int INCREMENT_UP = 5;    //--- Increment value when extending
+    private static final int INCREMENT_DOWN = 50;  //--- Decrement value when retracting
+
     //region --- Variables ---
     public String _spinState = "OFF";  //--- Tracks spinner state
     public String _liftState = "IN";  //--- Tracks lift state
     private boolean _isLiftIn = true;
+
+    //--- Variable to track the current target position for the intake motor
+    private int _currentIntakeTargetPosition = MOTOR_INTAKE_MIN_POSITION;
     //endregion
 
     //region --- Hardware ---
@@ -101,8 +108,62 @@ public class Intake
         }
     }
 
-    //--- Handles intake motor movement based on encoder positions
+    //--- Handles intake motor movement based on encoder positions using incremental control
     public void intakeByEncoder()
+    {
+        //--- Handle extension and retraction with lift state checks using incremental target position
+        if (_gamepad.left_trigger > 0.1)
+        {
+            //--- Increment the target position by INCREMENT_UP when extending
+            _currentIntakeTargetPosition += INCREMENT_UP;
+            //--- Bound the target position to the maximum allowed
+            if (_currentIntakeTargetPosition > MOTOR_INTAKE_MAX_POSITION)
+            {
+                _currentIntakeTargetPosition = MOTOR_INTAKE_MAX_POSITION;
+            }
+            //--- Command the motor to move to the updated target position
+            MotorUtils.moveToTargetPosition(_motorIntake, _currentIntakeTargetPosition, 1.0);
+            spinIn(); //--- Automatically spin in
+        }
+        else if (_gamepad.left_bumper)
+        {
+            //--- Decrement the target position by INCREMENT_DOWN when retracting
+            _currentIntakeTargetPosition -= INCREMENT_DOWN;
+            //--- Bound the target position to the minimum allowed
+            if (_currentIntakeTargetPosition < MOTOR_INTAKE_MIN_POSITION)
+            {
+                _currentIntakeTargetPosition = MOTOR_INTAKE_MIN_POSITION;
+            }
+            //--- Command the motor to move to the updated target position
+            MotorUtils.moveToTargetPosition(_motorIntake, _currentIntakeTargetPosition, 1.0);
+            spinOff(); //--- Automatically stop spinning
+        }
+        else
+        {
+            //--- Only turn off the motor when not close to the robot, ensuring responsive control
+            if (_motorIntake.getCurrentPosition() > 20)
+            {
+                //--- Stop the motor when no input is detected
+                MotorUtils.stopMotor(_motorIntake);
+            }
+        }
+
+        //--- Show telemetry if enabled
+        if (_showInfo)
+        {
+            _telemetry.addData("Intake -> Motor Power", "%4.2f", _motorIntake.getPower());
+            _telemetry.addData("Intake -> Target Position", _motorIntake.getTargetPosition());
+            _telemetry.addData("Intake -> Current Position", _motorIntake.getCurrentPosition());
+            _telemetry.addData("Intake -> Spinner", _spinState);
+            _telemetry.addData("Intake -> Lift State", _liftState);
+            _telemetry.addData("Intake -> Lift Left", "%4.2f", _servoIntakeLiftLeft.getPosition());
+            _telemetry.addData("Intake -> Lift Right", "%4.2f", _servoIntakeLiftRight.getPosition());
+        }
+    }
+
+    //--- Handles intake motor movement based on encoder positions
+
+    public void intakeByEncoderFullSpeed()
     {
         //--- Handle extension and retraction with lift state checks
         if (_gamepad.left_trigger > 0.1)

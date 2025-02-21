@@ -99,6 +99,26 @@ public class Drive
             moveRight(speed);
             if (_showInfo) _telemetry.addData("Drive -> Direction", "RIGHT (%4.2f)", speed);
         }
+        else
+        {
+            //--- Stop motors if no D-Pad button is pressed
+            stopMotors();
+            if (_showInfo) _telemetry.addData("Drive -> Direction", "STOP");
+        }
+    }
+
+    //--- Master drive control method to choose the active driving mode
+    public void driveControl(double speed)
+    {
+        //--- If any D-Pad button is pressed, use directional drive; otherwise, use arcade drive
+        if (_gamepad.dpad_up || _gamepad.dpad_down || _gamepad.dpad_left || _gamepad.dpad_right)
+        {
+            directionDrive(speed);
+        }
+        else
+        {
+            arcadeDriveSpeedControl();
+        }
     }
 
     //region --- Move Directions ---
@@ -137,6 +157,15 @@ public class Drive
         MotorUtils.setPower(_frontRight, -speed);
         MotorUtils.setPower(_rearLeft, -speed);
         MotorUtils.setPower(_rearRight, speed);
+    }
+
+    //--- Stops all drive motors
+    private void stopMotors()
+    {
+        MotorUtils.setPower(_frontLeft, 0);
+        MotorUtils.setPower(_frontRight, 0);
+        MotorUtils.setPower(_rearLeft, 0);
+        MotorUtils.setPower(_rearRight, 0);
     }
 
     //endregion

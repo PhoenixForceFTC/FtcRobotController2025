@@ -28,8 +28,8 @@ import org.firstinspires.ftc.teamcode.hardware.Arm;
 //
 //  - Y (▲)             - Next Step in Current Mode
 //  - A (✕)             - Previous Step in Current Mode
-//  - X (■)             - Intake In
-//  - B (○)             - Intake Out
+//  - X (■)             - Intake In/Out
+//  - B (○)             -
 //
 //----------------------------------------------------------------------
 // Joystick 2 -----------------------------------------------------------
@@ -102,8 +102,9 @@ public class TeleOp_Mecanum extends LinearOpMode
             //------------------------------------------------------------------------------------------
             //--- Drive
             //------------------------------------------------------------------------------------------
+            _robot.drive.driveControl(0.5); //--- Both D-pad for directional movement and Joysticks for mecanum movement
             //_robot.drive.directionDrive(0.5);  //--- D-pad for directional movement
-            _robot.drive.arcadeDriveSpeedControl();  //--- Joysticks for mecanum movement
+            //_robot.drive.arcadeDriveSpeedControl();  //--- Joysticks for mecanum movement
 
             //------------------------------------------------------------------------------------------
             //--- Intake
