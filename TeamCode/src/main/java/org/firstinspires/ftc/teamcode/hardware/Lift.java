@@ -13,6 +13,11 @@ public class Lift
     private static int LIFT_TOP_BASKET_POSITION;
     private static int LIFT_LOW_BASKET_POSITION;
     private static int LIFT_BOTTOM_POSITION;
+
+    private static int LIFT_DEL1_POSITION;
+    private static int LIFT_DEL2_POSITION;
+
+    private static int LIFT_;
     //endregion
 
     //region --- Hardware ---
@@ -44,12 +49,18 @@ public class Lift
             LIFT_TOP_BASKET_POSITION = 2000;
             LIFT_LOW_BASKET_POSITION = 650; //--- was 1200 -- for putting on the specimen
             LIFT_BOTTOM_POSITION = 0;
+
+            LIFT_DEL1_POSITION = 300;
+            LIFT_DEL2_POSITION = 800;
         }
         else //--- ARIEL
         {
             LIFT_TOP_BASKET_POSITION = 2000;
             LIFT_LOW_BASKET_POSITION = 650; //--- was 1200 -- for putting on the specimen
             LIFT_BOTTOM_POSITION = 0;
+
+            LIFT_DEL1_POSITION = 600;
+            LIFT_DEL2_POSITION = 800;
         }
     }
 
@@ -120,7 +131,18 @@ public class Lift
     {
         MotorUtils.moveToTargetPosition(_motorLiftLeft, LIFT_LOW_BASKET_POSITION, -1.0);
         MotorUtils.moveToTargetPosition(_motorLiftRight, LIFT_LOW_BASKET_POSITION, -1.0);
+    }
 
+    public void moveToDel1()
+    {
+        MotorUtils.moveToTargetPosition(_motorLiftLeft, LIFT_DEL1_POSITION, -1.0);
+        MotorUtils.moveToTargetPosition(_motorLiftRight, LIFT_DEL1_POSITION, -1.0);
+    }
+
+    public void moveToDel2()
+    {
+        MotorUtils.moveToTargetPosition(_motorLiftLeft, LIFT_DEL2_POSITION, -1.0);
+        MotorUtils.moveToTargetPosition(_motorLiftRight, LIFT_DEL2_POSITION, -1.0);
     }
 
     public void getTelemetry(){

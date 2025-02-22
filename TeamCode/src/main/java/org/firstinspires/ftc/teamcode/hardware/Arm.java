@@ -55,11 +55,11 @@ public class Arm {
                 //--- Drive to Submersible
                 //TODO: Auto Drive
                 //--- Arm ready to place specimen
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.BOTTOM),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.DEL1),
                 //--- Arm shoots up to clip specimen
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.LOW_BASKET),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.DEL2),
                 //--- Open claw
-                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.79, 0.39, LiftAction.LOW_BASKET)
+                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.79, 0.39, LiftAction.DEL2)
             );
         }
         else //--- ARIEL
@@ -74,11 +74,11 @@ public class Arm {
                 //--- Drive to Submersible
                 //TODO: Auto Drive
                 //--- Arm ready to place specimen
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.BOTTOM),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.DEL1),
                 //--- Arm shoots up to clip specimen
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.LOW_BASKET),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.DEL2),
                 //--- Open claw
-                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.79, 0.39, LiftAction.LOW_BASKET)
+                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.79, 0.39, LiftAction.DEL2)
             );
         }
 
@@ -191,7 +191,9 @@ public class Arm {
         HIGH_BASKET,
         SPECIMENS,
         CLIMBING,
-        LOW_BASKET
+        LOW_BASKET,
+        DEL1,
+        DEL2
     }
     //endregion
 
@@ -410,6 +412,18 @@ public class Arm {
             @Override
             public void execute(Lift lift) {
                 lift.moveToLowBasket();
+            }
+        },
+        DEL1 {
+            @Override
+            public void execute(Lift lift) {
+                lift.moveToDel1();
+            }
+        },
+        DEL2 {
+            @Override
+            public void execute(Lift lift) {
+                lift.moveToDel2();
             }
         },
         BOTTOM {
