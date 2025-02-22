@@ -13,15 +13,15 @@ import org.firstinspires.ftc.teamcode.utils.ServoUtils;
 public class Intake
 {
     //region --- Constants ---
-    private static final int MOTOR_INTAKE_MAX_POSITION = 1200; //--- Maximum position (fully extended)
-    private static final int MOTOR_INTAKE_MIN_POSITION = -30; //--- Minimum position (fully retracted)
-    private static final double SERVO_INTAKE_LIFT_IN = 0.85;  //--- Lift in position
-    private static final double SERVO_INTAKE_LIFT_OUT = 0.43; //--- Lift out position
+    private static int MOTOR_INTAKE_MAX_POSITION = 1200; //--- Maximum position (fully extended)
+    private static int MOTOR_INTAKE_MIN_POSITION = -30; //--- Minimum position (fully retracted)
+    private static double SERVO_INTAKE_LIFT_IN = 0.85;  //--- Lift in position
+    private static double SERVO_INTAKE_LIFT_OUT = 0.43; //--- Lift out position
     //endregion
 
     //--- Constants for incremental adjustments
-    private static final int INCREMENT_UP = 5;    //--- Increment value when extending
-    private static final int INCREMENT_DOWN = 50;  //--- Decrement value when retracting
+    private static int INCREMENT_UP = 5;    //--- Increment value when extending
+    private static int INCREMENT_DOWN = 50;  //--- Decrement value when retracting
 
     //region --- Variables ---
     public String _spinState = "OFF";  //--- Tracks spinner state
@@ -41,6 +41,8 @@ public class Intake
     private final Gamepad _gamepad;
     private final Telemetry _telemetry;
     private final boolean _showInfo;
+
+    private int _robotVersion;
     //endregion
 
     //region --- Constructor ---
@@ -48,7 +50,7 @@ public class Intake
             DcMotor motorIntake,
             CRServo servoIntakeSpinLeft, CRServo servoIntakeSpinRight,
             Servo servoIntakeLiftLeft, Servo servoIntakeLiftRight,
-            Gamepad gamepad, Telemetry telemetry, boolean showInfo
+            Gamepad gamepad, Telemetry telemetry, int robotVersion, boolean showInfo
     )
     {
         this._motorIntake = motorIntake;
@@ -67,7 +69,30 @@ public class Intake
         _liftState = "IN";
         _spinState = "OFF";
 
-//        liftIn();
+        if (_robotVersion == 1) //--- CRAB-IER
+        {
+            MOTOR_INTAKE_MAX_POSITION = 1200; //--- Maximum position (fully extended)
+            MOTOR_INTAKE_MIN_POSITION = -30; //--- Minimum position (fully retracted)
+            SERVO_INTAKE_LIFT_IN = 0.85;  //--- Lift in position
+            SERVO_INTAKE_LIFT_OUT = 0.43; //--- Lift out position
+            //endregion
+
+            //--- Constants for incremental adjustments
+            INCREMENT_UP = 5;    //--- Increment value when extending
+            INCREMENT_DOWN = 50;  //--- Decrement value when retracting
+        }
+        else //--- ARIEL
+        {
+            MOTOR_INTAKE_MAX_POSITION = 1200; //--- Maximum position (fully extended)
+            MOTOR_INTAKE_MIN_POSITION = -30; //--- Minimum position (fully retracted)
+            SERVO_INTAKE_LIFT_IN = 0.85;  //--- Lift in position
+            SERVO_INTAKE_LIFT_OUT = 0.43; //--- Lift out position
+            //endregion
+
+            //--- Constants for incremental adjustments
+            INCREMENT_UP = 5;    //--- Increment value when extending
+            INCREMENT_DOWN = 50;  //--- Decrement value when retracting
+        }
 
         //--- Keep the intake in place by default
 //        MotorUtils.moveToTargetPosition(_motorIntake, 0, 1.0);

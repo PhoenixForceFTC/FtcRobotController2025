@@ -33,11 +33,13 @@ public class Drive
     private final Gamepad _gamepad;
     private final Telemetry _telemetry;
     private final boolean _showInfo;
+
+    private int _robotVersion;
     //endregion
 
     //region --- Constructor ---
     public Drive(DcMotor frontLeft, DcMotor frontRight, DcMotor rearLeft, DcMotor rearRight,
-                 Gamepad gamepad, Telemetry telemetry, boolean showInfo)
+                 Gamepad gamepad, Telemetry telemetry, int robotVersion, boolean showInfo)
     {
         _frontLeft = frontLeft;
         _frontRight = frontRight;
@@ -45,6 +47,7 @@ public class Drive
         _rearRight = rearRight;
         _gamepad = gamepad;
         _telemetry = telemetry;
+        _robotVersion = robotVersion;
         _showInfo = showInfo;
     }
     //endregion

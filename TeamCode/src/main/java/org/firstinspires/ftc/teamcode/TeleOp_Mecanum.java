@@ -38,10 +38,10 @@ import org.firstinspires.ftc.teamcode.hardware.Arm;
 //  - Left Stick Click  -
 //  - Right Stick Click -
 //
-//  - Dpad Up           - ??Manual Arm Up
-//  - Dpad Down         - ??Manual Arm Down (Reset Encoder)
-//  - Dpad Right        - ??Manual Intake Out
-//  - Dpad Left         - ??Manual Intake In (Reset Encoder)
+//  - Dpad Up           - TODO -- Manual Arm Up
+//  - Dpad Down         - TODO -- Manual Arm Down (Reset Encoder)
+//  - Dpad Right        - TODO -- Manual Intake Out
+//  - Dpad Left         - TODO -- Manual Intake In (Reset Encoder)
 //
 //  - Right Trigger     -
 //  - Right Bumpers     -
@@ -73,7 +73,8 @@ public class TeleOp_Mecanum extends LinearOpMode
         //------------------------------------------------------------------------------------------
         //--- Robot Initialize
         //------------------------------------------------------------------------------------------
-        _robot.init();
+        int robotVersion = 1; //--- 1 for CRAB-IER and 2 for ARIEL
+        _robot.init(robotVersion);
 
         //------------------------------------------------------------------------------------------
         //--- Display and wait for the game to start (driver presses START)
@@ -88,6 +89,7 @@ public class TeleOp_Mecanum extends LinearOpMode
         //------------------------------------------------------------------------------------------
         _robot.arm.initialize();
         _robot.intake.initialize();
+        _robot.lift.initialize();
 
         //------------------------------------------------------------------------------------------
         //--- Run until the end of the match (driver presses STOP)
@@ -103,8 +105,6 @@ public class TeleOp_Mecanum extends LinearOpMode
             //--- Drive
             //------------------------------------------------------------------------------------------
             _robot.drive.driveControl(0.5); //--- Both D-pad for directional movement and Joysticks for mecanum movement
-            //_robot.drive.directionDrive(0.5);  //--- D-pad for directional movement
-            //_robot.drive.arcadeDriveSpeedControl();  //--- Joysticks for mecanum movement
 
             //------------------------------------------------------------------------------------------
             //--- Intake

@@ -118,7 +118,7 @@ public class RobotHardware {
      * Initialize all the robot's hardware.
      * This method must be called ONCE when the OpMode is initialized.
      */
-    public void init()
+    public void init(int robotVersion)
     {
         //------------------------------------------------------------------------------------------
         //--- Motor Config
@@ -186,6 +186,7 @@ public class RobotHardware {
                 servoIntakeLiftRight,
                 myOpMode.gamepad1,
                 myOpMode.telemetry,
+                robotVersion,
                 _showInfo
         );
 
@@ -196,6 +197,7 @@ public class RobotHardware {
                 motorDriveRearRight,
                 myOpMode.gamepad1,
                 myOpMode.telemetry,
+                robotVersion,
                 _showInfo
         );
 
@@ -204,6 +206,7 @@ public class RobotHardware {
                 motorLiftRight,
                 myOpMode.gamepad1,
                 myOpMode.telemetry,
+                robotVersion,
                 _showInfo
         );
 
@@ -216,6 +219,7 @@ public class RobotHardware {
                 myOpMode.gamepad1,
                 myOpMode.gamepad2,
                 myOpMode.telemetry,
+                robotVersion,
                 _showInfo,
                 lift
         );

@@ -24,7 +24,8 @@ public class TeleOp_Finetune extends LinearOpMode
         //------------------------------------------------------------------------------------------
         //--- Robot Initialize
         //------------------------------------------------------------------------------------------
-        _robot.init();
+        int robotVersion = 1; //--- 1 for CRAB-IER and 2 for ARIEL
+        _robot.init(robotVersion);
 
         //------------------------------------------------------------------------------------------
         //--- Display and wait for the game to start (driver presses START)
@@ -39,6 +40,7 @@ public class TeleOp_Finetune extends LinearOpMode
         //------------------------------------------------------------------------------------------
         _robot.arm.initialize();
         _robot.intake.initialize();
+        _robot.lift.initialize();
 
         //------------------------------------------------------------------------------------------
         //--- Run until the end of the match (driver presses STOP)

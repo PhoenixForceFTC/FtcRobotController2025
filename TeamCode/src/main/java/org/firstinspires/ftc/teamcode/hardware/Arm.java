@@ -15,26 +15,37 @@ import java.util.List;
 public class Arm {
 
     //region --- Constants ---
-    private static final double CLAW_WIDE = 0.5;
-    private static final double CLAW_OPEN = 0.61;
-    private static final double CLAW_CLOSED = 0.76;
-
-    private static final double WRIST_INTAKE = 0.03;
-    private static final double WRIST_DELIVERY = 0.69;
-
-    private static final double ELBOW_INTAKE = 0.31;
-    private static final double ELBOW_GRABBED = 0.38;
-    private static final double ELBOW_UP = 0.13;
-
-    private static final double SHOULDER_INTAKE = 0.75;
-    private static final double SHOULDER_FULL_BACK = 0.40;
-    private static final double SHOULDER_HOOKED = 0.50;
-
+    private static double CLAW_WIDE, CLAW_OPEN, CLAW_CLOSED, WRIST_INTAKE, WRIST_DELIVERY;
     //endregion
+
+    public void initialize()
+    {
+        if (_robotVersion == 1) //--- CRAB-IER
+        {
+            CLAW_WIDE = 0.5;
+            CLAW_OPEN = 0.61;
+            CLAW_CLOSED = 0.76;
+
+            WRIST_INTAKE = 0.03;
+            WRIST_DELIVERY = 0.69;
+        }
+        else //--- ARIEL
+        {
+            CLAW_WIDE = 0.5;
+            CLAW_OPEN = 0.61;
+            CLAW_CLOSED = 0.76;
+
+            WRIST_INTAKE = 0.03;
+            WRIST_DELIVERY = 0.69;
+        }
+    }
 
     //region --- State Machine Steps ---
     private void stepsForSpecimens() { //--- WORKING
-        _currentStates = Arrays.asList(
+
+        if (_robotVersion == 1) //--- CRAB-IER
+        {
+            _currentStates = Arrays.asList(
                 //--- Pick up specimen from side
                 new ArmState(CLAW_WIDE, WRIST_INTAKE, 0.34, 0.45, LiftAction.BOTTOM),
                 //--- Grab specimen
@@ -44,46 +55,107 @@ public class Arm {
                 //--- Drive to Submersible
                 //TODO: Auto Drive
                 //--- Arm ready to place specimen
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39,  LiftAction.BOTTOM),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.BOTTOM),
                 //--- Arm shoots up to clip specimen
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39,  LiftAction.LOW_BASKET),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.LOW_BASKET),
                 //--- Open claw
-                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.79, 0.39,  LiftAction.LOW_BASKET)
-        );
+                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.79, 0.39, LiftAction.LOW_BASKET)
+            );
+        }
+        else //--- ARIEL
+        {
+            _currentStates = Arrays.asList(
+                //--- Pick up specimen from side
+                new ArmState(CLAW_WIDE, WRIST_INTAKE, 0.34, 0.45, LiftAction.BOTTOM),
+                //--- Grab specimen
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.34, 0.45, LiftAction.BOTTOM),
+                //--- Lift specimen off the wall
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.34, 0.34, LiftAction.BOTTOM),
+                //--- Drive to Submersible
+                //TODO: Auto Drive
+                //--- Arm ready to place specimen
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.BOTTOM),
+                //--- Arm shoots up to clip specimen
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.LOW_BASKET),
+                //--- Open claw
+                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.79, 0.39, LiftAction.LOW_BASKET)
+            );
+        }
+
         updateStateMachines(_currentStates);
     }
 
     private void stepsForHighBasket()
     {
-        // Add more as needed
-        _currentStates = Arrays.asList(
+        if (_robotVersion == 1) //--- CRAB-IER
+        {
+            _currentStates = Arrays.asList(
                 //--- Arm is positioned above for the intake
-                new ArmState(CLAW_OPEN,   WRIST_INTAKE, 0.31, 0.44, LiftAction.BOTTOM),
+                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.31, 0.44, LiftAction.BOTTOM),
                 //--- Arm is positioned for the intake
-                new ArmState(CLAW_OPEN,   WRIST_INTAKE, 0.30, 0.52, LiftAction.BOTTOM),
+                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.30, 0.52, LiftAction.BOTTOM),
                 //--- Grab the block from intake
                 new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.30, 0.52, LiftAction.BOTTOM),
                 //--- Bend arm up to extract block
                 new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.19, 0.44, LiftAction.BOTTOM),
                 // ---Intermediate position for driving
                 new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.19, 0.27, LiftAction.BOTTOM),
-                //--- Position to drop in basket
+                //--- Position straight up to not hit basket
                 new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.51, 0.25, LiftAction.HIGH_BASKET),
                 //--- Position to drop in basket
                 new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.75, 0.27, LiftAction.HIGH_BASKET),
                 //--- Drop in basket
-                new ArmState(CLAW_OPEN,   WRIST_INTAKE, 0.75, 0.27, LiftAction.HIGH_BASKET)
-        );
+                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.75, 0.27, LiftAction.HIGH_BASKET)
+            );
+        }
+        else //--- ARIEL
+        {
+            _currentStates = Arrays.asList(
+                //--- Arm is positioned above for the intake
+                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.31, 0.44, LiftAction.BOTTOM),
+                //--- Arm is positioned for the intake
+                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.30, 0.52, LiftAction.BOTTOM),
+                //--- Grab the block from intake
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.30, 0.52, LiftAction.BOTTOM),
+                //--- Bend arm up to extract block
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.19, 0.44, LiftAction.BOTTOM),
+                // ---Intermediate position for driving
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.19, 0.27, LiftAction.BOTTOM),
+                //--- Position straight up to not hit basket
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.51, 0.25, LiftAction.HIGH_BASKET),
+                //--- Position to drop in basket
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.75, 0.27, LiftAction.HIGH_BASKET),
+                //--- Drop in basket
+                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.75, 0.27, LiftAction.HIGH_BASKET)
+            );
+        }
+
         updateStateMachines(_currentStates);
     }
 
     private void stepsForLowBasket() {
 
-        _currentStates = Arrays.asList(
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE,   ELBOW_INTAKE, SHOULDER_INTAKE,    LiftAction.BOTTOM),
-                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_UP,     SHOULDER_FULL_BACK, LiftAction.LOW_BASKET)
-                //TODO - add more
-        );
+        if (_robotVersion == 1) //--- CRAB-IER
+        {
+            _currentStates = Arrays.asList(
+                    //--- Arm is positioned for the intake
+                    new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.30, 0.52, LiftAction.BOTTOM),
+                    //--- Position straight up to not hit basket
+                    new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.51, 0.25, LiftAction.LOW_BASKET)
+                    //TODO - add more
+            );
+        }
+        else //--- ARIEL
+        {
+            _currentStates = Arrays.asList(
+                    //--- Arm is positioned for the intake
+                    new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.30, 0.52, LiftAction.BOTTOM),
+                    //--- Position straight up to not hit basket
+                    new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.51, 0.25, LiftAction.LOW_BASKET)
+                    //TODO - add more
+            );
+        }
+
         updateStateMachines(_currentStates);
     }
 
@@ -91,11 +163,25 @@ public class Arm {
 
         //TODO: Move the intake arm into robot
 
-        _currentStates = Arrays.asList(
-                //TODO - haven't started
-                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_GRABBED, SHOULDER_HOOKED, LiftAction.BOTTOM),
-                new ArmState(CLAW_CLOSED, WRIST_DELIVERY, ELBOW_GRABBED, SHOULDER_HOOKED, LiftAction.BOTTOM)
-        );
+        if (_robotVersion == 1) //--- CRAB-IER
+        {
+            _currentStates = Arrays.asList(
+                    //TODO - haven't started
+                    new ArmState(CLAW_CLOSED, WRIST_DELIVERY, 0.51, 0.25, LiftAction.BOTTOM),
+                    new ArmState(CLAW_CLOSED, WRIST_DELIVERY, 0.51, 0.25, LiftAction.BOTTOM)
+            );
+        }
+        else //--- ARIEL
+        {
+            _currentStates = Arrays.asList(
+                    //--- Arm is positioned for the intake
+                    new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.30, 0.52, LiftAction.BOTTOM),
+                    //--- Position straight up to not hit basket
+                    new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.51, 0.25, LiftAction.LOW_BASKET)
+                    //TODO - add more
+            );
+        }
+
         updateStateMachines(_currentStates);
     }
     //endregion
@@ -136,11 +222,13 @@ public class Arm {
 
     private Mode _currentMode = Mode.SPECIMENS; //--- Default mode
     private List<ArmState> _currentStates;
+
+    private int _robotVersion;
     //endregion
 
     //region --- Constructor ---
     public Arm(Servo servoClaw, Servo servoWrist, Servo servoElbow, Servo servoShoulderRight, Servo servoShoulderLeft,
-               Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry, boolean showInfo, Lift robotLift)
+               Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry, int robotVersion, boolean showInfo, Lift robotLift)
     {
         this._servoClaw = servoClaw;
         this._servoWrist = servoWrist;
@@ -150,6 +238,7 @@ public class Arm {
         this._gamepad1 = gamepad1;
         this._gamepad2 = gamepad2;
         this._telemetry = telemetry;
+        this._robotVersion = robotVersion;
         this._showInfo = showInfo;
         this._robotLift = robotLift; // Initialize the Lift reference
 
@@ -158,18 +247,6 @@ public class Arm {
     //endregion
 
     //region --- Arm Control ---
-    public void initialize()
-    {
-        //TODO: Can't move on initialization this season
-        /*
-        _servoClawPos = ServoUtils.moveToPosition(_servoClaw, CLAW_OPEN);
-        _servoWristPos = ServoUtils.moveToPosition(_servoWrist,  WRIST_INTAKE);
-        _servoElbowPos = ServoUtils.moveToPosition(_servoElbow, ELBOW_INTAKE);
-        _servoShoulderRightPos = ServoUtils.moveToPosition(_servoShoulderRight, SHOULDER_FULL_BACK);
-        _servoShoulderLeftPos = ServoUtils.moveToPosition(_servoShoulderLeft, SHOULDER_FULL_BACK);
-         */
-    }
-
     public void controlArm()
     {
         if (!areStateMachinesInitialized())
@@ -177,14 +254,26 @@ public class Arm {
             _telemetry.addData("Error", "State machines are not initialized");
             return;
         }
-        if(_gamepad2.dpad_up)
+
+        //--- Manual overrides
+        if (_gamepad2.dpad_up)
         {
-            _servoClawPos = ServoUtils.moveToPosition(_servoClaw, CLAW_OPEN);
-            _servoWristPos = ServoUtils.moveToPosition(_servoWrist,  WRIST_INTAKE);
-            _servoElbowPos = ServoUtils.moveToPosition(_servoElbow, ELBOW_GRABBED);
-            _servoShoulderRightPos = ServoUtils.moveToPosition(_servoShoulderRight, _shoulderRightStateMachine.next());
-            _servoShoulderLeftPos = ServoUtils.moveToPosition(_servoShoulderLeft, _shoulderLeftStateMachine.next());
+            //  - Dpad Up           - TODO -- Manual Arm Up
         }
+        else if (_gamepad2.dpad_down)
+        {
+            //  - Dpad Down         - TODO -- Manual Arm Down (Reset Encoder)
+        }
+        else if (_gamepad2.dpad_right)
+        {
+            //  - Dpad Right        - TODO -- Manual Intake Out
+        }
+        else if (_gamepad2.dpad_left)
+        {
+            //  - Dpad Left         - TODO -- Manual Intake In (Reset Encoder)
+        }
+
+        //--- Switch states
         if (_gamepad2.y)
         {
             switchMode(Mode.HIGH_BASKET);
@@ -202,6 +291,7 @@ public class Arm {
             switchMode(Mode.CLIMBING);
         }
 
+        //--- Navigate States
         if (_gamepad1.y)
         {
             moveToNextState();

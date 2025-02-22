@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.utils.MotorUtils;
 public class Lift
 {
     //region --- Constants ---
-    private static final int LIFT_TOP_BASKET_POSITION = 2000;
-    private static final int LIFT_LOW_BASKET_POSITION = 650; //--- was 1200 -- for putting on the specimen
-    private static final int LIFT_BOTTOM_POSITION = 0;
+    private static int LIFT_TOP_BASKET_POSITION;
+    private static int LIFT_LOW_BASKET_POSITION;
+    private static int LIFT_BOTTOM_POSITION;
     //endregion
 
     //region --- Hardware ---
@@ -21,18 +21,37 @@ public class Lift
     private final Gamepad _gamepad;
     private final Telemetry _telemetry;
     private final boolean _showInfo;
+
+    private int _robotVersion;
     //endregion
 
     //region --- Constructor
-    public Lift(DcMotor motorLiftLeft, DcMotor motorLiftRight, Gamepad gamepad, Telemetry telemetry, boolean showInfo)
+    public Lift(DcMotor motorLiftLeft, DcMotor motorLiftRight, Gamepad gamepad, Telemetry telemetry, int robotVersion, boolean showInfo)
     {
         this._motorLiftLeft = motorLiftLeft;
         this._motorLiftRight = motorLiftRight;
         this._gamepad = gamepad;
         this._telemetry = telemetry;
+        this._robotVersion = robotVersion;
         this._showInfo = showInfo;
     }
     //endregion
+
+    public void initialize()
+    {
+        if (_robotVersion == 1) //--- CRAB-IER
+        {
+            LIFT_TOP_BASKET_POSITION = 2000;
+            LIFT_LOW_BASKET_POSITION = 650; //--- was 1200 -- for putting on the specimen
+            LIFT_BOTTOM_POSITION = 0;
+        }
+        else //--- ARIEL
+        {
+            LIFT_TOP_BASKET_POSITION = 2000;
+            LIFT_LOW_BASKET_POSITION = 650; //--- was 1200 -- for putting on the specimen
+            LIFT_BOTTOM_POSITION = 0;
+        }
+    }
 
     //--- Handles lifting using power
     public void liftByPower()
