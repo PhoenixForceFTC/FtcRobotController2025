@@ -51,7 +51,7 @@ public class Lift
             LIFT_BOTTOM_POSITION = 0;
 
             LIFT_DEL1_POSITION = 300;
-            LIFT_DEL2_POSITION = 800;
+            LIFT_DEL2_POSITION = 900;
         }
         else //--- ARIEL
         {
@@ -59,8 +59,8 @@ public class Lift
             LIFT_LOW_BASKET_POSITION = 650; //--- was 1200 -- for putting on the specimen
             LIFT_BOTTOM_POSITION = 0;
 
-            LIFT_DEL1_POSITION = 600;
-            LIFT_DEL2_POSITION = 800;
+            LIFT_DEL1_POSITION = 300;
+            LIFT_DEL2_POSITION = 900;
         }
     }
 
@@ -121,26 +121,112 @@ public class Lift
         }
     }
 
+    //--- Keeps track of the last control mode
+    private enum LiftControlMode {
+        MANUAL, //--- Controlled by liftByPowerUp or liftByPowerDown
+        ENCODER, //--- Controlled by encoder position methods
+        NONE //--- No active control (e.g., stopped)
+    }
+
+    private LiftControlMode _lastControlMode = LiftControlMode.NONE;
+
+    //--- Moves the lift up by power
+    public void liftByPowerUp(double power)
+    {
+        //--- Ensure power is positive for upward movement
+        power = Math.abs(power);
+
+        //--- Call the centralized liftByPower method
+        liftByPower(power);
+    }
+
+    //--- Moves the lift down by power and resets the encoder
+    public void liftByPowerDown(double power)
+    {
+        //--- Ensure power is positive, then make it negative for downward movement
+        power = -Math.abs(power);
+
+        //--- Call the centralized liftByPower method
+        liftByPower(power);
+    }
+
+    //--- Reset the encoder
+    public void liftResetEncoder()
+    {
+        //--- Reset encoder values for both motors
+        _motorLiftLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        _motorLiftRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //--- Reconfigure for power mode after resetting
+        MotorUtils.configureForPower(_motorLiftLeft);
+        MotorUtils.configureForPower(_motorLiftRight);
+
+        //--- Show telemetry if enabled
+        if (_showInfo)
+        {
+            _telemetry.addData("Lift -> Encoder Reset", "Lift encoders reset to zero.");
+        }
+    }
+
+    //--- Moves the lift by specified power
+    private void liftByPower(double power)
+    {
+        //--- Set the control mode to manual
+        _lastControlMode = LiftControlMode.MANUAL;
+
+        //--- Configure motors for no encoder mode
+        MotorUtils.configureForPower(_motorLiftLeft);
+        MotorUtils.configureForPower(_motorLiftRight);
+
+        //--- Set the power to both motors
+        MotorUtils.setPower(_motorLiftLeft, power);
+        MotorUtils.setPower(_motorLiftRight, power);
+
+        //--- Show telemetry if enabled
+        if (_showInfo)
+        {
+            _telemetry.addData("Lift -> Power Left", "%4.2f", _motorLiftLeft.getPower());
+            _telemetry.addData("Lift -> Power Right", "%4.2f", _motorLiftRight.getPower());
+        }
+    }
+
+    //--- Stops the lift only if the last control was manual
+    public void stopLiftIfManual()
+    {
+        if (_lastControlMode == LiftControlMode.MANUAL)
+        {
+            MotorUtils.stopMotor(_motorLiftLeft);
+            MotorUtils.stopMotor(_motorLiftRight);
+
+            //--- Update the control mode to NONE
+            _lastControlMode = LiftControlMode.NONE;
+        }
+    }
+
     public void moveToHighBasket()
     {
+        _lastControlMode = LiftControlMode.ENCODER;
         MotorUtils.moveToTargetPosition(_motorLiftLeft, LIFT_TOP_BASKET_POSITION, -1.0);
         MotorUtils.moveToTargetPosition(_motorLiftRight, LIFT_TOP_BASKET_POSITION, -1.0);
     }
 
     public void moveToLowBasket()
     {
+        _lastControlMode = LiftControlMode.ENCODER;
         MotorUtils.moveToTargetPosition(_motorLiftLeft, LIFT_LOW_BASKET_POSITION, -1.0);
         MotorUtils.moveToTargetPosition(_motorLiftRight, LIFT_LOW_BASKET_POSITION, -1.0);
     }
 
     public void moveToDel1()
     {
+        _lastControlMode = LiftControlMode.ENCODER;
         MotorUtils.moveToTargetPosition(_motorLiftLeft, LIFT_DEL1_POSITION, -1.0);
         MotorUtils.moveToTargetPosition(_motorLiftRight, LIFT_DEL1_POSITION, -1.0);
     }
 
     public void moveToDel2()
     {
+        _lastControlMode = LiftControlMode.ENCODER;
         MotorUtils.moveToTargetPosition(_motorLiftLeft, LIFT_DEL2_POSITION, -1.0);
         MotorUtils.moveToTargetPosition(_motorLiftRight, LIFT_DEL2_POSITION, -1.0);
     }
@@ -154,6 +240,7 @@ public class Lift
 
     public void moveToBottom()
     {
+        _lastControlMode = LiftControlMode.ENCODER;
         MotorUtils.moveToTargetPosition(_motorLiftLeft, LIFT_BOTTOM_POSITION, -1.0);
         MotorUtils.moveToTargetPosition(_motorLiftRight, LIFT_BOTTOM_POSITION, -1.0);
     }

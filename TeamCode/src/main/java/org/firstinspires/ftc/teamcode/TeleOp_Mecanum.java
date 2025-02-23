@@ -35,13 +35,13 @@ import org.firstinspires.ftc.teamcode.hardware.Arm;
 // Joystick 2 -----------------------------------------------------------
 //  - Left Stick        -
 //  - Right Stick       -
-//  - Left Stick Click  -
-//  - Right Stick Click -
+//  - Left Stick Click  - Reset Lift Encoder
+//  - Right Stick Click - Reset Intake Encoder
 //
-//  - Dpad Up           - TODO -- Manual Arm Up
-//  - Dpad Down         - TODO -- Manual Arm Down (Reset Encoder)
-//  - Dpad Right        - TODO -- Manual Intake Out
-//  - Dpad Left         - TODO -- Manual Intake In (Reset Encoder)
+//  - Dpad Up           - Manual Lift Up
+//  - Dpad Down         - Manual Lift Down
+//  - Dpad Right        - Manual Intake Out
+//  - Dpad Left         - Manual Intake In
 //
 //  - Right Trigger     -
 //  - Right Bumpers     -
@@ -117,6 +117,7 @@ public class TeleOp_Mecanum extends LinearOpMode
             //--- Arm
             //------------------------------------------------------------------------------------------
             _robot.arm.controlArm();
+            //_robot.arm.controlArmManual();
 
             //------------------------------------------------------------------------------------------
             //--- Update Telemetry Display

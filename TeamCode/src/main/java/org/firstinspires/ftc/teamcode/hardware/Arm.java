@@ -197,6 +197,7 @@ public class Arm {
     }
     //endregion
 
+
     //region --- Variables ---
     private final Servo _servoClaw;
     private final Servo _servoWrist;
@@ -257,22 +258,24 @@ public class Arm {
             return;
         }
 
-        //--- Manual overrides
+        //--- Manual overrides for lift
         if (_gamepad2.dpad_up)
         {
-            //  - Dpad Up           - TODO -- Manual Arm Up
+            _robotLift.liftByPowerUp(1.0); //--- Moves lift up
         }
         else if (_gamepad2.dpad_down)
         {
-            //  - Dpad Down         - TODO -- Manual Arm Down (Reset Encoder)
+            _robotLift.liftByPowerDown(1.0); //--- Moves lift down
         }
-        else if (_gamepad2.dpad_right)
+        else
         {
-            //  - Dpad Right        - TODO -- Manual Intake Out
+            _robotLift.stopLiftIfManual(); //--- Stop if running manually
         }
-        else if (_gamepad2.dpad_left)
+
+        //--- Reset the lift encoder
+        if (_gamepad2.left_stick_button)
         {
-            //  - Dpad Left         - TODO -- Manual Intake In (Reset Encoder)
+            _robotLift.liftResetEncoder();
         }
 
         //--- Switch states

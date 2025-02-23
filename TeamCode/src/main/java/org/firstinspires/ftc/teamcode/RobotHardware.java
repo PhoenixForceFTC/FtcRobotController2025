@@ -186,6 +186,7 @@ public class RobotHardware {
                 servoIntakeLiftLeft,
                 servoIntakeLiftRight,
                 myOpMode.gamepad1,
+                myOpMode.gamepad2,
                 myOpMode.telemetry,
                 robotVersion,
                 _showInfo
