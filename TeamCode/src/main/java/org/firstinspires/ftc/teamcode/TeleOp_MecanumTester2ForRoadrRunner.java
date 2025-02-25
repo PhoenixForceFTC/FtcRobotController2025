@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 //endregion
 
@@ -34,13 +36,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 // Joystick 2 -----------------------------------------------------------
 //  - Left Stick        -
 //  - Right Stick       -
-//  - Left Stick Click  - Reset Lift Encoder
-//  - Right Stick Click - Reset Intake Encoder
+//  - Left Stick Click  -
+//  - Right Stick Click -
 //
-//  - Dpad Up           - Manual Lift Up
-//  - Dpad Down         - Manual Lift Down
-//  - Dpad Right        - Manual Intake Out
-//  - Dpad Left         - Manual Intake In
+//  - Dpad Up           - TODO -- Manual Arm Up
+//  - Dpad Down         - TODO -- Manual Arm Down (Reset Encoder)
+//  - Dpad Right        - TODO -- Manual Intake Out
+//  - Dpad Left         - TODO -- Manual Intake In (Reset Encoder)
 //
 //  - Right Trigger     -
 //  - Right Bumpers     -
@@ -54,14 +56,20 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //----------------------------------------------------------------------
 //endregion
 
-@TeleOp(name="TeleOp", group="1")
-public class TeleOp_Mecanum extends LinearOpMode
+@TeleOp(name="TeleOp_MecanumTester2ForRoadrRunner", group="")
+public final class TeleOp_MecanumTester2ForRoadrRunner extends LinearOpMode
 {
     //------------------------------------------------------------------------------------------
     // Variables
     //------------------------------------------------------------------------------------------
-    RobotHardware _robot = new RobotHardware(this);
+
     public ElapsedTime _runtime = new ElapsedTime();
+    public DcMotorEx leftFront;
+    public DcMotorEx leftBack;
+    public DcMotorEx rightBack;
+    public DcMotorEx rightFront;
+    public static double speed = 0.01;
+
 
     //------------------------------------------------------------------------------------------
     //--- OpMode
@@ -69,11 +77,19 @@ public class TeleOp_Mecanum extends LinearOpMode
     @Override
     public void runOpMode()
     {
+        leftFront = hardwareMap.get(DcMotorEx.class, "fl");
+        leftBack = hardwareMap.get(DcMotorEx.class, "rl");
+        rightBack = hardwareMap.get(DcMotorEx.class, "rr");
+        rightFront = hardwareMap.get(DcMotorEx.class, "fr");
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //------------------------------------------------------------------------------------------
         //--- Robot Initialize
         //------------------------------------------------------------------------------------------
         int robotVersion = 1; //--- 1 for CRAB-IER and 2 for ARIEL
-        _robot.init(robotVersion);
 
         //------------------------------------------------------------------------------------------
         //--- Display and wait for the game to start (driver presses START)
@@ -86,42 +102,21 @@ public class TeleOp_Mecanum extends LinearOpMode
         //------------------------------------------------------------------------------------------
         //--- Hardware Initialize
         //------------------------------------------------------------------------------------------
-        _robot.arm.initialize();
-        _robot.intake.initialize();
-        _robot.lift.initialize();
+
 
         //------------------------------------------------------------------------------------------
         //--- Run until the end of the match (driver presses STOP)
         //------------------------------------------------------------------------------------------
         while (opModeIsActive()) {
-
+            leftFront.setPower(speed);
+            leftBack.setPower(speed);
+            rightFront.setPower(speed);
+            rightBack.setPower(speed);
             //------------------------------------------------------------------------------------------
             //--- Start Telemetry Display
             //------------------------------------------------------------------------------------------
             telemetry.addData("Status", "Run Time: " + _runtime.toString());
 
-            //------------------------------------------------------------------------------------------
-            //--- Drive
-            //------------------------------------------------------------------------------------------
-            _robot.drive.driveControl(0.5); //--- Both D-pad for directional movement and Joysticks for mecanum movement
-
-            //------------------------------------------------------------------------------------------
-            //--- Intake
-            //------------------------------------------------------------------------------------------
-            _robot.intake.intakeByEncoder();
-            _robot.intake.setSpinnerControls();
-            _robot.intake.setLiftArmControls();
-            _robot.intake.controlIntake();
-
-            //------------------------------------------------------------------------------------------
-            //--- Arm
-            //------------------------------------------------------------------------------------------
-            _robot.arm.controlArm();
-            //_robot.arm.controlArmManual();
-
-            //------------------------------------------------------------------------------------------
-            //--- Update Telemetry Display
-            //------------------------------------------------------------------------------------------
             telemetry.update();
         }
     }
