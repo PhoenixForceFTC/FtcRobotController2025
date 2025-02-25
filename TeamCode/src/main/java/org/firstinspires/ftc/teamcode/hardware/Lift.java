@@ -50,8 +50,8 @@ public class Lift
             LIFT_LOW_BASKET_POSITION = 650; //--- was 1200 -- for putting on the specimen
             LIFT_BOTTOM_POSITION = 0;
 
-            LIFT_DEL1_POSITION = 300;
-            LIFT_DEL2_POSITION = 900;
+            LIFT_DEL1_POSITION = 150;
+            LIFT_DEL2_POSITION = 800;
         }
         else //--- ARIEL
         {

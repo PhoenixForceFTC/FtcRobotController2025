@@ -98,7 +98,7 @@ public class Intake
 
         //--- Keep the intake in place by default
         //TODO check about reducing power -- see if that overheats
-//        MotorUtils.moveToTargetPosition(_motorIntake, 0, 1.0);
+        MotorUtils.moveToTargetPosition(_motorIntake, 0, 0.33);
     }
     //endregion
 
@@ -295,9 +295,7 @@ public class Intake
         }
     }
 
-    public void controlArm() {
-
-
+    public void controlIntake() {
 
         if (_gamepad2.dpad_right)
         {

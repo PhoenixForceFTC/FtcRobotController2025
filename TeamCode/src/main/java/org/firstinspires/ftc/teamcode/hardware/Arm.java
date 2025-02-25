@@ -47,17 +47,17 @@ public class Arm {
         {
             _currentStates = Arrays.asList(
                 //--- Pick up specimen from side
-                new ArmState(CLAW_WIDE, WRIST_INTAKE, 0.34, 0.45, LiftAction.BOTTOM),
+                new ArmState(CLAW_WIDE, WRIST_INTAKE, 0.4, 0.46, LiftAction.BOTTOM),
                 //--- Grab specimen
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.34, 0.45, LiftAction.BOTTOM),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.4, 0.46, LiftAction.BOTTOM),
                 //--- Lift specimen off the wall
                 new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.34, 0.34, LiftAction.BOTTOM),
                 //--- Drive to Submersible
                 //TODO: Auto Drive
                 //--- Arm ready to place specimen
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.DEL1),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.34, LiftAction.DEL1),
                 //--- Arm shoots up to clip specimen
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.DEL2),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.34, LiftAction.DEL2),
                 //--- Open claw
                 new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.79, 0.39, LiftAction.DEL2)
             );
