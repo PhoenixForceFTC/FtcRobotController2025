@@ -55,8 +55,7 @@ public class TeleOp_Finetune extends LinearOpMode
             //------------------------------------------------------------------------------------------
             //--- Drive
             //------------------------------------------------------------------------------------------
-            _robot.drive.directionDrive(0.5);  //--- D-pad for directional movement
-            _robot.drive.arcadeDriveSpeedControl();  //--- Joysticks for mecanum movement
+            _robot.drive.driveControl(0.5); //--- Both D-pad for directional movement and Joysticks for mecanum movement
 
             //--- Fine tuning positions
             _robot.arm.fineTuneArm();

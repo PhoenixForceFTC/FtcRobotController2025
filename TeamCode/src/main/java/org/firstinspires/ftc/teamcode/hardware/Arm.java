@@ -47,19 +47,19 @@ public class Arm {
         {
             _currentStates = Arrays.asList(
                 //--- Pick up specimen from side
-                new ArmState(CLAW_WIDE, WRIST_INTAKE, 0.34, 0.45, LiftAction.BOTTOM),
+                new ArmState(CLAW_WIDE, WRIST_INTAKE, 0.4, 0.46, LiftAction.BOTTOM),
                 //--- Grab specimen
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.34, 0.45, LiftAction.BOTTOM),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.4, 0.46, LiftAction.BOTTOM),
                 //--- Lift specimen off the wall
                 new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.34, 0.34, LiftAction.BOTTOM),
                 //--- Drive to Submersible
                 //TODO: Auto Drive
                 //--- Arm ready to place specimen
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.BOTTOM),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.34, LiftAction.DEL1),
                 //--- Arm shoots up to clip specimen
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.LOW_BASKET),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.34, LiftAction.DEL2),
                 //--- Open claw
-                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.79, 0.39, LiftAction.LOW_BASKET)
+                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.79, 0.39, LiftAction.DEL2)
             );
         }
         else //--- ARIEL
@@ -74,11 +74,11 @@ public class Arm {
                 //--- Drive to Submersible
                 //TODO: Auto Drive
                 //--- Arm ready to place specimen
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.BOTTOM),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.DEL1),
                 //--- Arm shoots up to clip specimen
-                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.LOW_BASKET),
+                new ArmState(CLAW_CLOSED, WRIST_INTAKE, 0.79, 0.39, LiftAction.DEL2),
                 //--- Open claw
-                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.79, 0.39, LiftAction.LOW_BASKET)
+                new ArmState(CLAW_OPEN, WRIST_INTAKE, 0.79, 0.39, LiftAction.DEL2)
             );
         }
 
@@ -191,9 +191,12 @@ public class Arm {
         HIGH_BASKET,
         SPECIMENS,
         CLIMBING,
-        LOW_BASKET
+        LOW_BASKET,
+        DEL1,
+        DEL2
     }
     //endregion
+
 
     //region --- Variables ---
     private final Servo _servoClaw;
@@ -255,22 +258,24 @@ public class Arm {
             return;
         }
 
-        //--- Manual overrides
+        //--- Manual overrides for lift
         if (_gamepad2.dpad_up)
         {
-            //  - Dpad Up           - TODO -- Manual Arm Up
+            _robotLift.liftByPowerUp(1.0); //--- Moves lift up
         }
         else if (_gamepad2.dpad_down)
         {
-            //  - Dpad Down         - TODO -- Manual Arm Down (Reset Encoder)
+            _robotLift.liftByPowerDown(1.0); //--- Moves lift down
         }
-        else if (_gamepad2.dpad_right)
+        else
         {
-            //  - Dpad Right        - TODO -- Manual Intake Out
+            _robotLift.stopLiftIfManual(); //--- Stop if running manually
         }
-        else if (_gamepad2.dpad_left)
+
+        //--- Reset the lift encoder
+        if (_gamepad2.left_stick_button)
         {
-            //  - Dpad Left         - TODO -- Manual Intake In (Reset Encoder)
+            _robotLift.liftResetEncoder();
         }
 
         //--- Switch states
@@ -410,6 +415,18 @@ public class Arm {
             @Override
             public void execute(Lift lift) {
                 lift.moveToLowBasket();
+            }
+        },
+        DEL1 {
+            @Override
+            public void execute(Lift lift) {
+                lift.moveToDel1();
+            }
+        },
+        DEL2 {
+            @Override
+            public void execute(Lift lift) {
+                lift.moveToDel2();
             }
         },
         BOTTOM {
